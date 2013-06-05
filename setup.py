@@ -1,9 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from distutils.core import setup
+from setuptools import setup, find_packages
 
-
-setup(
+METADATA = dict(
     name='django-socialnetwork',
     version='0.0.1',
     author=u'Gabriel González',
@@ -13,11 +12,17 @@ setup(
     long_description=open('README.txt').read(),
     license='LICENSE',
     url='https://github.com/gGonz/django-socialnetwork',
-    packages=['socialnetwork'],
-    install_requieres=[
+    install_requires=[
         'Django >= 1.4',
         'requests',
-        'requests_oauhtlib',
+        'requests_oauthlib',
     ],
+    include_package_data=True,
+    packages=find_packages(),
 )
+
+
+if __name__ == '__main__':
+    setup(**METADATA)
+
 
