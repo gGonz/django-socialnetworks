@@ -1,0 +1,82 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-05 17:54+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: base/models.py:14
+msgid "user"
+msgstr "usuario"
+
+#: base/models.py:20
+msgid "uid"
+msgstr "uid"
+
+#: base/models.py:25
+msgid "last modified"
+msgstr "última modificación"
+
+#: base/models.py:40
+msgid "OAuth request token"
+msgstr "token de solicitud de OAuth"
+
+#: base/models.py:45
+msgid "OAuth request token secret"
+msgstr "secreto del token de solicitud de OAuth"
+
+#: base/models.py:50 base/models.py:70
+msgid "OAuth access token"
+msgstr "token de acceso de OAuth"
+
+#: base/models.py:55
+msgid "OAuth access token secret"
+msgstr "secreto del token de acceso de OAuth"
+
+#: base/models.py:74
+msgid "OAuth access token expires at"
+msgstr "expiración del token de acceso de OAuth"
+
+#: base/views.py:176
+#, python-format
+msgid ""
+"Your %(service)s profile was successfully connected with your user account."
+msgstr "Tu cuenta se ha conectado con tu perfil de %(service)s."
+
+#: base/views.py:187
+#, python-format
+msgid ""
+"This %(service)s profile is already connected with another user account."
+msgstr "Este perfil de %(service)s ya se encuentra conectado con otra cuenta de usuario."
+
+#: base/views.py:287
+#, python-format
+msgid ""
+"Your %(service)s profile was successfully disconnected from your user "
+"account."
+msgstr "Tu cuenta se ha desconectado de tu perfil de %(service)s."
+
+#: facebook/models.py:8
+msgid "facebook profile"
+msgstr "perfil de facebook"
+
+#: facebook/models.py:9
+msgid "facebook profiles"
+msgstr "perfiles de facebook"
+
+#: facebook/templatetags/facebook.py:11
+msgid "Sign in with Facebook"
+msgstr "Registrarse con Facebook"
