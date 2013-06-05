@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 METADATA = dict(
     name='django-socialnetwork',
-    version='0.0.1',
+    version='0.0.2',
     author=u'Gabriel González',
     author_email='zurg.cei@gmail.com',
     description=('Django app that provides login and share access with '
