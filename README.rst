@@ -8,7 +8,7 @@ Installation
 
 .. code-block::
 
-    pip install django-socialregistration
+    pip install django-socialnetwork
 
 
 Basic usage
