@@ -1,2 +1,3 @@
-v0.0.1, 2013-06-03 -- Initial release, supports for Facebook Sign in.
-v0.0.2, 3013-06-05 -- Fixed template resolve problems and updated setup script.
+v0.0.1, 2013-06-03 -- Initial release, support for Facebook Sign in.
+v0.0.2, 2013-06-04 -- Fixed template resolve problems and updated setup script.
+v0.0.3, 2013-06-05 -- Improves README and login_button styling.
