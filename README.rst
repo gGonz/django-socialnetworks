@@ -36,7 +36,20 @@ Basic usage
     SOCIALNETWORK_FACEBOOK_SCOPE_PERMISSIONS = ['email', ...]
 
 
-3. Add ``socialnetwork`` to your ``urls``.
+3. Add the ``social backends`` to your ``AUTHENTICATION_BACKENDS``.
+
+.. code-block:: python
+
+    AUTHENTICATION_BACKENDS = (
+        ...
+        ...
+        'socialnetwork.facebook.backends.FacebookBackend',
+        ...
+        ...
+    )
+
+
+4. Add ``socialnetwork`` to your ``urls``.
 
 .. code-block:: python
 
@@ -48,7 +61,7 @@ Basic usage
         ...
     )
 
-4. Show ``login button`` in your ``templates``.
+5. Show ``login button`` in your ``templates``.
 
 .. code-block:: python
 
@@ -61,7 +74,7 @@ Basic usage
     ...
     ...
 
-5. Request data. The client **must be initialized** with a ``profile`` object.
+6. Request data. The client **must be initialized** with a ``profile`` object.
 
 .. code-block:: python
 
@@ -75,7 +88,7 @@ Basic usage
     data['first_name']
     >>> 'John'
 
-6. Check access token.
+7. Check access token.
 
 .. code-block:: python
 
