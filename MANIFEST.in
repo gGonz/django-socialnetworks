@@ -1,3 +1,4 @@
 include *.txt
 include LICENSE
+recursive-include socialnetwork/locale *
 recursive-include socialnetwork *.html
