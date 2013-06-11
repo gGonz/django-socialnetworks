@@ -74,7 +74,21 @@ Basic usage
     ...
     ...
 
-6. Request data. The client **must be initialized** with a ``profile`` object.
+6. Share content using ``tags`` in your ``templates`` (you can provide any **named** args accepted by the Facebook JavaScript SDK).
+
+.. code-block:: python
+    
+    ...
+    ...
+    {% load facebook %}
+    ...
+    ...
+    {% facebook_share 'text to show in button' 'css_class1 css_class2 ... css_classN' link="mysite.com" name="This is my site" ... %}
+    ...
+    ...
+
+
+7. Request data. The client **must be initialized** with a ``profile`` object.
 
 .. code-block:: python
 
@@ -83,12 +97,12 @@ Basic usage
     from socialnetwork.facebook.clients import FacebookGraph
     ...
     ...
-    graph = FacebookGraph(user.facebookprofile)
+    graph = FacebookGraph(user.facebookoauthprofile)
     data = graph.get('me', params={'fields': 'first_name,last_name,picture.type(normal)'})
     data['first_name']
     >>> 'John'
 
-7. Check access token.
+8. Check access token.
 
 .. code-block:: python
 
@@ -96,9 +110,14 @@ Basic usage
     >>> (True, {'data': {'is_valid':True, 'access_token':...}})
 
 
+    
+
+    
+
+
 TODO
 ====
 
-1. Add support for ``share button``.
+1. Provide a method to call a custom setup when the OAuth flow ends.
 2. Extend support for OAuth 2 services (Foursquare, Github, etc.)
 3. Add support for OAuth 1 services (Twitter, LinkedIn, etc.)

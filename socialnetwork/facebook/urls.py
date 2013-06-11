@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import url, patterns
+from django.conf.urls import url, patterns
 
 from socialnetwork.facebook import views
 
@@ -18,6 +18,6 @@ urlpatterns = patterns('',
     ),
     url(
         r'^disconnect/$',
-        views.FacebookProfileDisconnect.as_view(), name='disconnect'
+        views.FacebookOAuthProfileDisconnect.as_view(), name='disconnect'
     ),
 )

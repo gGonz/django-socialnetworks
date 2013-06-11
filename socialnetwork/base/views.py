@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.views.generic.base import View
 
 from socialnetwork.signals import connect, disconnect, login
@@ -238,7 +238,16 @@ class OAuthSetupView(BaseOAuthView):
                     username=data['username'], email=data['email']
                 )
             except User.DoesNotExist:
-                user = User.objects.create(**data)
+                # Gets the extra data to create the new user.
+                extra_fields = dict(filter(
+                    lambda i: i[0] in ['first_name', 'last_name'],
+                    data.items()
+                ))
+
+                # Creates the new user.
+                user = User.objects.create_user(
+                    data['username'], email=data['email'], **extra_fields
+                )
 
             profile.user = user
             profile.save()
@@ -276,8 +285,7 @@ class BaseProfileDisconnectView(View):
     def post(self, request, *args, **kwargs):
         profile = self.get_profile()
         if profile:
-            print profile.__dict__
-            user = self.request.user
+            user = profile.user
             profile.delete()
             disconnect.send(
                 sender=self, user=user,

@@ -7,6 +7,7 @@ from socialnetwork.base.views import (
     OAuthSetupView, BaseProfileDisconnectView
 )
 from socialnetwork.facebook.clients import FacebookClient, FacebookGraph
+from socialnetwork.facebook.models import FacebookOAuthProfile
 
 
 class FacebookDialogRedirect(OAuthDialogRedirectView):
@@ -61,11 +62,14 @@ class FacebookSetup(OAuthSetupView):
         return dict(zip(fields, [data[f] for f in fields]))
 
 
-class FacebookProfileDisconnect(BaseProfileDisconnectView):
+class FacebookOAuthProfileDisconnect(BaseProfileDisconnectView):
     client = FacebookClient()
 
     def get_profile(self):
         try:
-            return self.request.user.facebookprofile
-        except:
+            return FacebookOAuthProfile.objects.get(
+                user__id=self.request.user.id
+            )
+
+        except FacebookOAuthProfile.DoesNotExist:
             return None

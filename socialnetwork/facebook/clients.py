@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 
 from socialnetwork.base.clients import BaseOAuth2Client
 from socialnetwork.facebook import settings
-from socialnetwork.facebook.models import FacebookProfile
+from socialnetwork.facebook.models import FacebookOAuthProfile
 
 
 class FacebookClient(BaseOAuth2Client):
@@ -23,7 +23,7 @@ class FacebookClient(BaseOAuth2Client):
     access_token_endpoint = 'https://graph.facebook.com/oauth/access_token?'
     api_entrypoint = 'https://graph.facebook.com/'
     session_key = 'socialnetwork:facebook'
-    model = FacebookProfile
+    model = FacebookOAuthProfile
 
     # Facebook callback url.
     def get_callback_url(self):
