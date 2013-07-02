@@ -34,7 +34,7 @@ Bugfixes:
 
 * Deprecated imports
 
-## 0.0.4 (2013-06-05)
+## 0.0.4 (unreleased)
 
 Features:
 
