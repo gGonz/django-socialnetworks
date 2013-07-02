@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-05 17:54+0000\n"
+"POT-Creation-Date: 2013-07-02 19:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,33 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: base/forms.py:17
+msgid "Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."
+msgstr "Obligatorio. Máximo 30 caracteres. Letras, dígitos y (@/./+/-/_) solamente."
+
+#: base/forms.py:19
+msgid "This value may contain only letters, numbers and @/./+/-/_ characters."
+msgstr "Este valor solo puede contener letras, dígitos y (@/./+/-/_)."
+
+#: base/forms.py:21
+msgid "username"
+msgstr "nombre de usuario"
+
+#: base/forms.py:27
+msgid "email"
+msgstr "correo electrónico"
+
+#: base/forms.py:55
+msgid "This username is already in use, please provide a different username."
+msgstr "Este nombre de usuario ya está siendo usado por alguien más, por favor proporciona un numbre de usuario diferente."
+
+#: base/forms.py:71
+msgid ""
+"This email address is already in use, please provide a different email "
+"address."
+msgstr "Esta dirección de correo electrónico ya está siendo usada por alguien más, por favor proporciona una dirección diferente."
 
 #: base/models.py:14
 msgid "user"
@@ -50,24 +76,26 @@ msgstr "secreto del token de acceso de OAuth"
 msgid "OAuth access token expires at"
 msgstr "expiración del token de acceso de OAuth"
 
-#: base/views.py:176
+#: base/views.py:225
 #, python-format
 msgid ""
 "Your %(service)s profile was successfully connected with your user account."
-msgstr "Tu cuenta se ha conectado con tu perfil de %(service)s."
+msgstr "Tu perfil de %(service)s se ha conectado exitosamente a tu cuenta de usuario."
 
-#: base/views.py:187
+#: base/views.py:236
 #, python-format
 msgid ""
 "This %(service)s profile is already connected with another user account."
-msgstr "Este perfil de %(service)s ya se encuentra conectado con otra cuenta de usuario."
+msgstr ""
+"Este perfil de %(service)s ya se encuentra conectado con otra cuenta de "
+"usuario."
 
-#: base/views.py:287
+#: base/views.py:421
 #, python-format
 msgid ""
 "Your %(service)s profile was successfully disconnected from your user "
 "account."
-msgstr "Tu cuenta se ha desconectado de tu perfil de %(service)s."
+msgstr "Tu perfil de %(service)s se ha desconectado de tu cuenta de usuario con éxito."
 
 #: facebook/models.py:8
 msgid "facebook profile"
@@ -77,6 +105,34 @@ msgstr "perfil de facebook"
 msgid "facebook profiles"
 msgstr "perfiles de facebook"
 
-#: facebook/templatetags/facebook.py:11
+#: facebook/templates/setup_form.html:24 twitter/templates/setup_form.html:24
+msgid "It seems that there are errors on the form"
+msgstr "Parece que hay errores en los datos del formulario"
+
+#: facebook/templates/setup_form.html:49 twitter/templates/setup_form.html:49
+msgid "Submit"
+msgstr "Enviar"
+
+#: facebook/templatetags/facebook.py:17
 msgid "Sign in with Facebook"
-msgstr "Registrarse con Facebook"
+msgstr "Regístrate con Facebook"
+
+#: facebook/templatetags/facebook.py:72
+msgid "Share"
+msgstr "Compartir"
+
+#: twitter/models.py:8
+msgid "twitter profile"
+msgstr "perfil de twitter"
+
+#: twitter/models.py:9
+msgid "twitter profiles"
+msgstr "perfiles de twitter"
+
+#: twitter/templatetags/twitter.py:17
+msgid "Sign in with Twitter"
+msgstr "Regístrate con Twitter"
+
+#: twitter/templatetags/twitter.py:60
+msgid "Tweet"
+msgstr "Twittear"

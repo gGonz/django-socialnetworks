@@ -1,6 +1,0 @@
-v0.0.1, 2013-06-03 -- Initial release, support for Facebook Sign in.
-v0.0.2, 2013-06-04 -- Fixed template resolve problems and updated setup script.
-v0.0.3, 2013-06-05 -- Improves README and login_button styling.
-v0.0.4, 2013-06-05 -- Improved translations.
-v0.0.5, 2013-06-11 -- Removes deprecated imports.
-v0.0.6, 2013-06-11 -- Fixed the collision with django-socialregistration models, added share button tag.

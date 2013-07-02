@@ -29,7 +29,7 @@ class BaseSocialProfile(models.Model):
         abstract = True
 
 
-class BaseOAuthProfile(BaseSocialProfile):
+class BaseOAuth1Profile(BaseSocialProfile):
     """
     Base Model that stores OAuth 1.0 flow information.
 

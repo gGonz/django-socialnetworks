@@ -1,6 +1,6 @@
 <form action="{{ action }}">
     <input type="hidden" name="next" value="{% if 'next' in request.GET %}{{ request.GET.next }}{% else %}{{ request.path }}{% endif %}"/>
     <a class="{{ css_class }}" onclick="this.parentNode.submit()">
-        <i></i><span>{{ value }}</span>
+        <i></i><span>{{ label }}</span>
     </a>
 </form>

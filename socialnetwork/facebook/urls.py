@@ -4,20 +4,16 @@ from socialnetwork.facebook import views
 
 
 urlpatterns = patterns('',
-    url(
-        r'^login/$',
+    url(r'^login/$',
         views.FacebookDialogRedirect.as_view(), name='login'
     ),
-    url(
-        r'^callback/$',
+    url(r'^callback/$',
         views.FacebookCallback.as_view(), name='callback'
     ),
-    url(
-        r'^setup/$',
+    url(r'^setup/$',
         views.FacebookSetup.as_view(), name='setup'
     ),
-    url(
-        r'^disconnect/$',
-        views.FacebookOAuthProfileDisconnect.as_view(), name='disconnect'
+    url(r'^disconnect/$',
+        views.FacebookOAuthDisconnect.as_view(), name='disconnect'
     ),
 )

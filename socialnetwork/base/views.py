@@ -2,17 +2,20 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
-from django.utils.translation import ugettext as _
-from django.views.generic.base import View
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic.base import View, TemplateView
 
+from socialnetwork.base.settings import (EMAIL_IS_USERNAME,
+    SETUP_FORM_CLASS, SETUP_TEMPLATE)
 from socialnetwork.signals import connect, disconnect, login
 
 
-class BaseOAuthView(View):
+class OAuthMixin(object):
     """
-    Base class for the OAuth flow.
+    Mixin that defines the necessary methods for OAuth views.
     OAuth views must be inherited from this class.
 
     """
@@ -26,10 +29,10 @@ class BaseOAuthView(View):
         be used trough the OAuth flow.
 
         """
-        if self.client.session_key not in self.__request.session:
-            self.__request.session[self.client.session_key] = {}
+        if self.client.session_key not in self.request.session:
+            self.request.session[self.client.session_key] = {}
 
-        return self.__request.session[self.client.session_key]
+        return self.request.session[self.client.session_key]
 
     def __set_session(self, dictionary):
         """
@@ -37,7 +40,7 @@ class BaseOAuthView(View):
         configured to save session in every request.
 
         """
-        self.__request.session[self.client.session_key] = dictionary
+        self.request.session[self.client.session_key] = dictionary
 
     def session_get(self, key):
         """
@@ -74,231 +77,349 @@ class BaseOAuthView(View):
         stored from the current user's session.
 
         """
-        if self.client.session_key in self.__request.session:
-            del self.__request.session[self.client.session_key]
+        if self.client.session_key in self.request.session:
+            del self.request.session[self.client.session_key]
 
-    def get_redirect_url(self):
-        """"
-        Returns the url where the user will be redirected after its request
-        is processed.
-
-        Subclasses must implement this method.
+    def get_callback_url(self):
+        """
+        Returns the url where the user will be redirected after when the
+        access token is requested.
 
         """
         raise NotImplementedError
 
-    def dispatch(self, request, *args, **kwargs):
+    def get_redirect_url(self):
         """
-        Sets the current request as an atrribute, this way it can be accessed
-        easily by the methods that modifies the user session.
+        Returns the url where the user will be redirected after its request
+        is processed and is successfully logged in.
 
         """
-        self.__request = request
-        return super(BaseOAuthView, self).dispatch(request, *args, **kwargs)
+        raise NotImplementedError
+
+    def get_profile(self):
+        """
+        Returns the current user's OAuth profile or None.
+
+        """
+        raise NotImplementedError
+
+    def create_new_user(self, data):
+        """
+        Returns a new user, created from the data dictionary.
+
+        """
+        raise NotImplementedError
 
 
-class OAuthDialogRedirectView(BaseOAuthView):
+class OAuthDialogRedirectView(View, OAuthMixin):
     """
-    Base view that handles the service's auth/login dialog request.
+    Base view that handles the redirection to the service
+    authorization dialog.
 
     """
-    def get(self, request):
-        # Clears the current user's session to avoid the use of old
-        # login information.
+    def get(self, request, *args, **kwargs):
+        # Clears the current session to avoid conflicts.
         self.session_clear()
 
         # Fetches the url where the user will be redirected when the
         # flow ends and stores it in the user's session.
         if 'next' in request.GET:
-            self.session_put(**{
-                'next': request.GET['next']
-            })
-
+            self.session_put(**{'next': request.GET['next']})
         else:
+            self.session_put(**{'next': '/'})
+
+        if self.client.oauth_version == 1:
+            # Gets the OAuth request token.
+            credentials = self.client.get_request_token(
+                callback=self.get_callback_url())
+
+            # Appends the response to the user session.
             self.session_put(**{
-                'next': '/'
+                'request_token': credentials.get('oauth_token'),
+                'request_token_secret': credentials.get('oauth_token_secret')
             })
 
-        # Makes the request of the login/auth dialog to the service.
+        # Redirects the user to the authorization dialog.
         return redirect(self.get_redirect_url())
 
 
-class OAuthCallbackView(BaseOAuthView):
+class OAuthCallbackView(View, OAuthMixin):
     """
     Base view that handles the callback redirection from the service.
 
     """
-    def get(self, request):
-        # Protect the view to be accessed by non OAuth requests.
-        if 'code' not in request.GET:
+    def get(self, request, *args, **kwargs):
+        # Protects the view to be accessed by non OAuth requests.
+        if self.client.verifier_label not in request.GET:
             return HttpResponseForbidden()
 
-        # Request the access token to the service
-        token = self.client.request_access_token(request.GET['code'])
-
-        # If the given access token is valid then tries to login or create
-        # the user, if the token is invalid then redirects to the start of
-        # the flow.
-        token_is_valid, token_debug = self.client.debug_access_token(token)
-
-        if token_is_valid:
-            self.session_put(**{
-                'access_token': token,
-                'expires_at': token_debug['expires_at'],
-                'uid': token_debug['user_id'],
-            })
-
-            # Gets or creates the profile in the service
-            profile, created = self.client.model.objects.get_or_create(
-                service_uid=self.session_get('uid')
+        # Gets the OAuth access token.
+        if self.client.oauth_version == 1:
+            credentials = self.client.get_access_token(
+                request_token=self.session_get('request_token'),
+                request_token_secret=self.session_get('request_token_secret'),
+                verifier=request.GET[self.client.verifier_label]
+            )
+        elif self.client.oauth_version == 2:
+            credentials = self.client.get_access_token(
+                verifier=request.GET[self.client.verifier_label],
+                callback=self.get_callback_url(),
             )
 
-            # If the given access_token does not match the token stored in
-            # the db updates the profile with the new access token.
-            if profile.oauth_access_token != token:
-                profile.oauth_access_token = token
-                profile.oauth_access_token_expires_at = (
-                    datetime.fromtimestamp(self.session_get('expires_at'))
-                )
+        # Verifies if the service's user id was provided in the credentials,
+        # if it not provided fetches is by debugging the access token.
+        service_uid = credentials.get(self.client.uid_label, None)
+        token_expiration = None
+
+        if not service_uid:
+            token_is_valid, debugged_data = self.client.debug_access_token(
+                credentials[self.client.access_token_label])
+            if token_is_valid:
+                service_uid = debugged_data.get(self.client.uid_label)
+                token_expiration = debugged_data.get('expires_at')
+
+        # Appends the response to the user session.
+        self.session_put(**{
+            'access_token': credentials.get(
+                self.client.access_token_label),
+            'access_token_secret': credentials.get(
+                self.client.access_token_secret_label),
+            'service_uid': service_uid
+        })
+
+        # Gets or creates the service's profile.
+        profile, created = self.client.model.objects.get_or_create(
+            service_uid=self.session_get('service_uid')
+        )
+
+        # Updates the profile to make sure that we have always the most
+        # recent token.
+        profile.oauth_access_token = self.session_get('access_token')
+
+        if self.client.oauth_version == 1:
+            profile.oauth_request_token = self.session_get('request_token')
+            profile.oauth_request_token_secret = self.session_get(
+                'request_token_secret')
+            profile.oauth_access_token_secret = self.session_get(
+                'access_token_secret')
+
+        if self.client.oauth_version == 2:
+            profile.oauth_access_token_expires_at = datetime.fromtimestamp(
+                token_expiration) if token_expiration else None
+
+        profile.save()
+
+        # If the profile was created or has no user, tries to attach the
+        # profile to current user, if the user is not logged in redirects
+        # it to the final setup view to create a new one.
+        if created or not profile.user:
+            if request.user.is_authenticated():
+                profile.user = self.request.user
                 profile.save()
 
-            # If the profile was created or has no user, tries to attach the
-            # the profile to current user, if the user is not logged in
-            # redirects it to the final setup view to create a new one.
-            if created or not profile.user:
-                if request.user.is_authenticated():
-                    profile.user = self.request.user
-                    profile.save()
-                    connect.send(
-                        sender=self, user=self.request.user,
-                        service=self.client.service_name.lower()
-                    )
-                    messages.success(self.request, _('Your %(service)s '
-                        'profile was successfully connected with your '
-                        'user account.' % {
-                            'service': self.client.service_name
-                        })
-                    )
-                else:
-                    self.session_put(**{'new_user': True})
+                # Tells to the site that the user has connected its profile.
+                connect.send(sender=self, user=self.request.user,
+                    service=self.client.service_name.lower())
 
-            elif (profile.user and profile.user != self.request.user and
-                  self.request.user.is_authenticated()):
-                    messages.error(self.request, _('This %(service)s profile '
-                        'is already connected with another user account.' % {
-                            'service': self.client.service_name
-                        })
-                    )
-                    return redirect(self.get_redirect_url())
+                # Tells to the user that his connection was successful.
+                messages.success(request, _('Your %(service)s profile '
+                    'was successfully connected with your user account.') %
+                    {'service': self.client.service_name})
 
             else:
-                # Logs the user in if it is not logged yet.
-                self.client.login(request, self.session_get('uid'))
-                login.send(
-                    sender=self, user=self.request.user,
-                    service=self.client.service_name.lower()
-                )
+                self.session_put(**{'new_user': True})
 
-            return redirect(self.get_redirect_url())
+        elif (profile.user and profile.user != self.request.user and
+            self.request.user.is_authenticated()):
+
+            # Tells to the user that his connection was unsuccessful.
+            messages.error(request, _('This %(service)s profile is '
+                'already connected with another user account.') %
+                {'service': self.client.service_name})
+
+        else:
+            # Logs the user in if it is not logged yet.
+            self.client.login(request, self.session_get('service_uid'))
+
+            # Tells to the site that the user was logged in.
+            login.send(sender=self, user=self.request.user,
+                service=self.client.service_name.lower())
+
+        return redirect(self.get_redirect_url())
 
 
-class OAuthSetupView(BaseOAuthView):
+class OAuthSetupView(TemplateView, OAuthMixin):
     """
     Base View that handles the setup for the account after the access
     token is provided.
 
     """
-    def retrieve_user_data(self):
-        """
-        Returns a dictionary with the keys 'first_name', 'last_name', 'email'
-        and 'username'. The values for the keys should be retrieved from the
-        service.
-
-        Subclasses must implement this method.
-
-        """
-        raise NotImplementedError
-
-    def get(self, request):
-        # Protect the view to be accessed by non logged users.
-        if request.user.is_authenticated():
-            return HttpResponseForbidden()
-
-        # Fetches the profile that corresponds to the service uid.
-        profile = self.client.model.objects.get(service_uid=self.session_get('uid'))
-
-        # If the profile has no user tries to fetch an already registered
-        # user with the retrieved username/email. If the looked user does
-        # not exist creates a new one with all the retrieved data.
-        if not profile.user:
-            data = self.retrieve_user_data()
-
-            try:
-                user = User.objects.get(
-                    username=data['username'], email=data['email']
-                )
-            except User.DoesNotExist:
-                # Gets the extra data to create the new user.
-                extra_fields = dict(filter(
-                    lambda i: i[0] in ['first_name', 'last_name'],
-                    data.items()
-                ))
-
-                # Creates the new user.
-                user = User.objects.create_user(
-                    data['username'], email=data['email'], **extra_fields
-                )
-
-            profile.user = user
-            profile.save()
-            connect.send(
-                sender=self, user=user,
-                service=self.client.service_name.lower()
-            )
-
-        # Authenticates the new user.
-        self.client.login(request, self.session_get('uid'))
-        login.send(
-            sender=self, user=user,
-            service=self.client.service_name.lower()
-        )
-
-        # Redirects the user to the proper url.
-        return redirect(self.get_redirect_url())
-
-
-class BaseProfileDisconnectView(View):
-    """
-    Base view that handles social profiles disconnection.
-
-    """
-    client = None
+    template_name = SETUP_TEMPLATE
 
     def get_profile(self):
-        """
-        Returns the current profile object that will be deleted.
-        Subclasses must implement this method.
+        # Tries to return the OAuth profile by retrieving the service_uid
+        # in the current session.
+        try:
+            return self.client.model.objects.get(
+                service_uid=self.session_get('service_uid'))
 
-        """
-        raise NotImplementedError
+        except self.client.model.DoesNotExist:
+            return None
+
+    def create_new_user(self, data):
+        # Creates the new user.
+        user = User.objects.create_user(
+            data['username'], email=data['email']
+        )
+
+        # Updates the user data.
+        user.first_name = data['first_name']
+        user.last_name = data['last_name']
+        user.save()
+
+        return user
+
+    def get_context_data(self, **kwargs):
+        context = super(OAuthSetupView, self).get_context_data(**kwargs)
+        context['service'] = self.client.service_name
+        context['form'] = kwargs.get('form', SETUP_FORM_CLASS(kwargs))
+        return context
+
+    def get(self, request, *args, **kwargs):
+        # Protects the view to be accessed by non OAuth requests.
+        if (request.user.is_authenticated() or
+            not self.session_get('service_uid')):
+            return HttpResponseForbidden()
+
+        # Fetches the current OAuth profile.
+        profile = self.get_profile()
+
+        # If the profile has no user tries to attach the current user to it,
+        # if the user is not logged in then creates a new one.
+        if not profile.user:
+            # Fetches the user data from the service.
+            user_data = self.retrieve_user_data()
+
+            if EMAIL_IS_USERNAME and 'email' in user_data:
+                user_data.update({'username': user_data['email']})
+
+            # If the data is incomplete then redirects the user to the final
+            # setup form.
+            if ('username' not in user_data or 'email' not in user_data or
+                [(k, v) for k, v in
+                user_data.items() if k in ['username', 'email'] and not v]):
+                return self.render_to_response(
+                    self.get_context_data(**user_data))
+
+            else:
+                # Tries to fetch an exiting user with that matches the data
+                # retrieved from the service.
+                try:
+                    username_filter = Q(username=user_data['username'])
+                    email_filter = Q(email=user_data['email'])
+                    user = User.objects.get(username_filter | email_filter)
+
+                # If no user is found, then creates a new user with the data
+                # retrieved from the service.
+                except User.DoesNotExist:
+                    user = self.create_new_user(user_data)
+
+                # Attaches the user to the profile.
+                profile.user = user
+                profile.save()
+
+                # Tells to the site that the user has connected its profile.
+                connect.send(sender=self, user=user,
+                    service=self.client.service_name.lower())
+
+                # Authenticates the new user.
+                self.client.login(request, self.session_get('service_uid'))
+
+                # Tells to the site that the user was logged in.
+                login.send(sender=self, user=user,
+                    service=self.client.service_name.lower())
+
+                # Redirects the user to the proper url.
+                return redirect(self.get_redirect_url())
 
     def post(self, request, *args, **kwargs):
+        # Protects the view to be accessed by non OAuth requests.
+        if (request.user.is_authenticated() or
+            not self.session_get('service_uid')):
+            return HttpResponseForbidden()
+
+        # Fetches the current OAuth profile.
         profile = self.get_profile()
+
+        form = SETUP_FORM_CLASS(request.POST)
+        if form.is_valid():
+            # Composes the data for the user creation.
+            user_data = {
+                'email': form.cleaned_data['email'],
+                'first_name': form.cleaned_data['first_name'],
+                'last_name': form.cleaned_data['last_name']
+            }
+
+            # Sets the user's username.
+            if EMAIL_IS_USERNAME:
+                user_data.update({'username': user_data['email']})
+            else:
+                user_data.update({'username': form.cleaned_data['username']})
+
+            # Gets a new user and attaches it to the profile.
+            user = self.create_new_user(user_data)
+            profile.user = user
+            profile.save()
+
+            # Tells to the site that the user has connected its profile.
+            connect.send(sender=self, user=user,
+                service=self.client.service_name.lower())
+
+            # Authenticates the new user.
+            self.client.login(request, self.session_get('service_uid'))
+
+            # Tells to the site that the user was logged in.
+            login.send(sender=self, user=user,
+                service=self.client.service_name.lower())
+
+            # Redirects the user to the proper url.
+            return redirect(self.get_redirect_url())
+
+        else:
+            return self.render_to_response(self.get_context_data(
+                **{'form': form}))
+
+
+class OAuthDisconnectView(View, OAuthMixin):
+    def get_profile(self):
+        # Tries to return the OAuth profile by retrieving the current
+        # user's id.
+        try:
+            return self.client.model.objects.get(
+                user__id=self.request.user.id)
+
+        except self.client.model.DoesNotExist:
+            return None
+
+    def get_redirect_url(self):
+        return self.session_pop('next') or '/'
+
+    def get(self, request, *args, **kwargs):
+        # Fetches the OAuth profile.
+        profile = self.get_profile()
+
+        # If the profile is given then deletes it.
         if profile:
             user = profile.user
             profile.delete()
-            disconnect.send(
-                sender=self, user=user,
-                service=self.client.service_name.lower()
-            )
 
-        messages.success(self.request, _('Your %(service)s profile was '
-            'successfully disconnected from your user account.' % {
-                'service': self.client.service_name
-            })
-        )
+            # Tells to the site that the profile was disconnected.
+            disconnect.send(sender=self, user=user,
+                service=self.client.service_name.lower())
 
-        if 'next' in request.POST:
-            return redirect(request.POST['next'])
-        else:
-            return redirect('/')
+            # Tells to the user that the disconnection was successful.
+            messages.success(request, _('Your %(service)s profile was '
+                'successfully disconnected from your user account.') %
+                {'service': self.client.service_name})
+
+        return redirect(self.get_redirect_url())
