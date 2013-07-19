@@ -1,4 +1,4 @@
-from requests.models import Request
+import requests
 
 from django import template
 from django.core.urlresolvers import reverse
@@ -16,7 +16,7 @@ def twitter_login(context, label=None, css_class=None):
     """
     context['label'] = label or _('Sign in with Twitter')
     context['css_class'] = css_class
-    context['action'] = reverse('socialnetwork:twitter:login')
+    context['action'] = reverse('socialnetworks:twitter:login')
 
     return template.loader.render_to_string('login_button.html', context)
 
@@ -55,7 +55,8 @@ def twitter_share(context, label=None, css_class=None, **kwargs):
     )
 
     # Preparing the url with the encoded parameters.
-    r = Request(url='https://twitter.com/share', params=kwargs).prepare()
+    r = requests.Request(url='https://twitter.com/share',
+        params=kwargs).prepare()
 
     context['label'] = label or _('Tweet')
     context['css_class'] = css_class

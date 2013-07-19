@@ -1,6 +1,6 @@
-from socialnetwork.base.clients import OAuth1Client
-from socialnetwork.twitter import settings
-from socialnetwork.twitter.models import TwitterOAuthProfile
+from socialnetworks.base.clients import OAuth1Client
+from socialnetworks.twitter import settings
+from socialnetworks.twitter.models import TwitterOAuthProfile
 
 
 class TwitterClient(OAuth1Client):
@@ -15,4 +15,13 @@ class TwitterClient(OAuth1Client):
     authorization_url = 'https://api.twitter.com/oauth/authorize'
     access_token_url = 'https://api.twitter.com/oauth/access_token'
     token_debug_url = 'account/verify_credentials.json'
-    session_key = 'socialnetwork:twitter'
+    session_key = 'socialnetworks:twitter'
+
+    def debug_access_token(self):
+        if self.profile:
+            r = self.get(self.token_debug_url)
+
+            if 'errors' in r:
+                return (False, r)
+            else:
+                return (True, r)

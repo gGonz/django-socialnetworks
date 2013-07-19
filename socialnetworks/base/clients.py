@@ -76,7 +76,7 @@ class BaseOAuthClient(object):
         Returns the encoded url with thw given parameters.
 
         """
-        r = requests.models.Request(url, **{'params': params}).prepare()
+        r = requests.Request(url=url, params=params).prepare()
         return r.url
 
     def login(self, request, uid):

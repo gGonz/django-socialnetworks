@@ -8,9 +8,9 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View, TemplateView
 
-from socialnetwork.base.settings import (EMAIL_IS_USERNAME,
+from socialnetworks.base.settings import (EMAIL_IS_USERNAME,
     SETUP_FORM_CLASS, SETUP_TEMPLATE)
-from socialnetwork.signals import connect, disconnect, login
+from socialnetworks.signals import connect, disconnect, login
 
 
 class OAuthMixin(object):
@@ -401,10 +401,7 @@ class OAuthDisconnectView(View, OAuthMixin):
         except self.client.model.DoesNotExist:
             return None
 
-    def get_redirect_url(self):
-        return self.session_pop('next') or '/'
-
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # Fetches the OAuth profile.
         profile = self.get_profile()
 
@@ -422,4 +419,4 @@ class OAuthDisconnectView(View, OAuthMixin):
                 'successfully disconnected from your user account.') %
                 {'service': self.client.service_name})
 
-        return redirect(self.get_redirect_url())
+        return redirect(request.POST.get('next', '/'))

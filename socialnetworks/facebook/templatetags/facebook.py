@@ -2,7 +2,7 @@ from django import template
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from socialnetwork.facebook.settings import APP_ID
+from socialnetworks.facebook.settings import APP_ID
 
 
 register = template.Library()
@@ -15,7 +15,7 @@ def facebook_login(context, label=None, css_class=None):
 
     """
     context['label'] = label or _('Sign in with Facebook')
-    context['action'] = reverse('socialnetwork:facebook:login')
+    context['action'] = reverse('socialnetworks:facebook:login')
     context['css_class'] = css_class
 
     return template.loader.render_to_string('login_button.html', context)

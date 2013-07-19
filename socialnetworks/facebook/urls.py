@@ -1,6 +1,6 @@
 from django.conf.urls import url, patterns
 
-from socialnetwork.facebook import views
+from socialnetworks.facebook import views
 
 
 urlpatterns = patterns('',

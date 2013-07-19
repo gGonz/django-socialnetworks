@@ -1,8 +1,8 @@
 from django.core.urlresolvers import reverse
 
-from socialnetwork.base.views import (OAuthDialogRedirectView,
+from socialnetworks.base.views import (OAuthDialogRedirectView,
     OAuthCallbackView, OAuthSetupView, OAuthDisconnectView)
-from socialnetwork.facebook.clients import FacebookClient
+from socialnetworks.facebook.clients import FacebookClient
 
 
 class FacebookDialogRedirect(OAuthDialogRedirectView):
@@ -10,7 +10,7 @@ class FacebookDialogRedirect(OAuthDialogRedirectView):
 
     def get_callback_url(self):
         return self.client.get_domain() + reverse(
-            'socialnetwork:facebook:callback')
+            'socialnetworks:facebook:callback')
 
     def get_redirect_url(self):
         return self.client.enconde_url(self.client.authorization_url, {
@@ -25,11 +25,11 @@ class FacebookCallback(OAuthCallbackView):
 
     def get_callback_url(self):
         return self.client.get_domain() + reverse(
-            'socialnetwork:facebook:callback')
+            'socialnetworks:facebook:callback')
 
     def get_redirect_url(self):
         if self.session_get('new_user'):
-            return reverse('socialnetwork:facebook:setup')
+            return reverse('socialnetworks:facebook:setup')
 
         else:
             return self.session_pop('next') or '/'

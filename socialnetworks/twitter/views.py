@@ -1,8 +1,8 @@
 from django.core.urlresolvers import reverse
 
-from socialnetwork.base.views import (OAuthDialogRedirectView,
+from socialnetworks.base.views import (OAuthDialogRedirectView,
     OAuthCallbackView, OAuthSetupView, OAuthDisconnectView)
-from socialnetwork.twitter.clients import TwitterClient
+from socialnetworks.twitter.clients import TwitterClient
 
 
 class TwitterDialogRedirect(OAuthDialogRedirectView):
@@ -10,7 +10,7 @@ class TwitterDialogRedirect(OAuthDialogRedirectView):
 
     def get_callback_url(self):
         return self.client.get_domain() + reverse(
-            'socialnetwork:twitter:callback')
+            'socialnetworks:twitter:callback')
 
     def get_redirect_url(self):
         return self.client.enconde_url(self.client.authorization_url, {
@@ -22,7 +22,7 @@ class TwitterCallback(OAuthCallbackView):
 
     def get_redirect_url(self):
         if self.session_get('new_user'):
-            return reverse('socialnetwork:twitter:setup')
+            return reverse('socialnetworks:twitter:setup')
 
         else:
             return self.session_pop('next') or '/'

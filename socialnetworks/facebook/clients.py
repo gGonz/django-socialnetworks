@@ -1,6 +1,6 @@
-from socialnetwork.base.clients import OAuth2Client
-from socialnetwork.facebook import settings
-from socialnetwork.facebook.models import FacebookOAuthProfile
+from socialnetworks.base.clients import OAuth2Client
+from socialnetworks.facebook import settings
+from socialnetworks.facebook.models import FacebookOAuthProfile
 
 
 class FacebookClient(OAuth2Client):
@@ -16,7 +16,7 @@ class FacebookClient(OAuth2Client):
     access_token_url = 'https://graph.facebook.com/oauth/access_token?'
     token_debug_url = 'debug_token?'
     service_api_url = 'https://graph.facebook.com/'
-    session_key = 'socialnetwork:facebook'
+    session_key = 'socialnetworks:facebook'
 
     # Returns the app access token if it is defined in settings,
     # otherwise fetches the token from Facebook.
@@ -33,7 +33,10 @@ class FacebookClient(OAuth2Client):
             r = self.__request_get__(self.access_token_url, params=params)
             return self.parse_response(r.content)['access_token']
 
-    def debug_access_token(self, token):
+    def debug_access_token(self, token=None):
+        if self.profile and not token:
+            token = self.profile.oauth_access_token
+
         r = self.get(self.token_debug_url, params={'input_token': token},
             auth_params={'access_token': self.get_app_access_token()})
 

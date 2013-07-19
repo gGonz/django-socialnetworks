@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from socialnetwork.base.models import BaseOAuth1Profile
+from socialnetworks.base.models import BaseOAuth1Profile
 
 
 class TwitterOAuthProfile(BaseOAuth1Profile):

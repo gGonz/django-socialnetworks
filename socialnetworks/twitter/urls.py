@@ -1,6 +1,6 @@
 from django.conf.urls import url, patterns
 
-from socialnetwork.twitter import views
+from socialnetworks.twitter import views
 
 
 urlpatterns = patterns('',

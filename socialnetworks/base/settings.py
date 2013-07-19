@@ -9,21 +9,22 @@ __all__ = ['EMAIL_IS_USERNAME', 'SETUP_FORM_CLASS', 'SETUP_TEMPLATE']
 # Tries to get the module configuration, if the configuration is not
 # provided or is incorrect raises an ImproperlyConfigured exception.
 if [True for app in settings.INSTALLED_APPS if 'socialnetwork' in app]:
-    CONFIGURATION = getattr(settings, 'SOCIALNETWORK_CONFIGURATION', None)
+    CONFIGURATION = getattr(settings, 'SOCIALNETWORKS_CONFIGURATION', None)
 
     if not CONFIGURATION:
-        raise ImproperlyConfigured('You have one or more socialnetwork '
+        raise ImproperlyConfigured('You have one or more socialnetworks '
             'modules in your INSTALLED_APPS but you do not specify any '
-            '"SOCIALNETWORK_CONFIGURATION" in your settings.')
+            '"SOCIALNETWORKS_CONFIGURATION" in your settings.')
 
     else:
         EMAIL_IS_USERNAME = CONFIGURATION.get('EMAIL_IS_USERNAME', True)
+        COOKIE_MAX_AGE = CONFIGURATION.get('COOKIE_MAX_AGE', 900)
         SETUP_TEMPLATE = CONFIGURATION.get('SETUP_TEMPLATE',
             'setup_form.html')
 
         # Imports and defines the setup form class.
         form_class = CONFIGURATION.get('SETUP_FORM_CLASS',
-            'socialnetwork.base.forms.SocialUserCreationForm')
+            'socialnetworks.base.forms.SocialUserCreationForm')
 
         module_ = '.'.join(form_class.split('.')[:-1])
         class_ = form_class.split('.')[-1]

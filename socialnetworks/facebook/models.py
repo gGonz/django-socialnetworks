@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from socialnetwork.base.models import BaseOAuth2Profile
+from socialnetworks.base.models import BaseOAuth2Profile
 
 
 class FacebookOAuthProfile(BaseOAuth2Profile):
