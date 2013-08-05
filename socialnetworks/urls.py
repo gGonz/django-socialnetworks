@@ -11,6 +11,13 @@ if 'socialnetworks.facebook' in settings.INSTALLED_APPS:
         ),
     )
 
+if 'socialnetworks.linkedin' in settings.INSTALLED_APPS:
+    urlpatterns = urlpatterns + patterns('',
+        url(r'^linkedin/',
+            include('socialnetworks.linkedin.urls', namespace='linkedin')
+        ),
+    )
+
 if 'socialnetworks.twitter' in settings.INSTALLED_APPS:
     urlpatterns = urlpatterns + patterns('',
         url(r'^twitter/',
