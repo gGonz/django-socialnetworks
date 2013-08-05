@@ -12,9 +12,11 @@ class FacebookClient(OAuth2Client):
     scope = settings.SCOPE
     model = FacebookOAuthProfile
 
-    authorization_url = 'https://www.facebook.com/dialog/oauth?'
-    access_token_url = 'https://graph.facebook.com/oauth/access_token?'
-    token_debug_url = 'debug_token?'
+    expiration_label = 'expires'
+
+    authorization_url = 'https://www.facebook.com/dialog/oauth'
+    access_token_url = 'https://graph.facebook.com/oauth/access_token'
+    token_debug_url = 'debug_token'
     service_api_url = 'https://graph.facebook.com/'
     session_key = 'socialnetworks:facebook'
 
