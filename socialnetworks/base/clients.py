@@ -1,3 +1,4 @@
+import json
 import requests
 
 from requests_oauthlib import OAuth1, OAuth2
@@ -39,11 +40,23 @@ class BaseOAuthClient(object):
     # The url where the service give us the access token.
     access_token_url = None
 
+    # The label of the request token in the service.
     request_token_label = None
+
+    # The label of the request token secret in the service.
     request_token_secret_label = None
+
+    # The label of the access token in the service.
     access_token_label = None
+
+    # The label of the access token secret in the service.
     access_token_secret_label = None
+
+    # The label of the user's id in the service.
     uid_label = None
+
+    # The label of the access token expiration in the service.
+    expiration_label = None
 
     # The url where the access token can be debbuged.
     token_debug_url = None
@@ -91,7 +104,8 @@ class BaseOAuthClient(object):
         Returns a dictionary of the parsed response.
 
         """
-        return dict(parse_qsl(data))
+        parsed = dict(parse_qsl(data))
+        return parsed or json.loads(data)
 
     def get_auth_params(self):
         """
@@ -277,6 +291,7 @@ class OAuth2Client(BaseOAuthClient):
     def get_access_token(self, verifier=None, callback=None):
         # Composes the parameters for the request.
         params = {
+            'grant_type': 'authorization_code',
             'client_id': self.app_key,
             'client_secret': self.app_secret,
             'redirect_uri': callback,
@@ -285,4 +300,6 @@ class OAuth2Client(BaseOAuthClient):
 
         # Requesting and parsing the access token.
         r = self.__request_post__(self.access_token_url, params=params)
+        print r.url
+        print r.content
         return self.parse_response(r.content)

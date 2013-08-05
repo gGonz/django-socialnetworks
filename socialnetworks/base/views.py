@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View, TemplateView
 
@@ -167,16 +168,22 @@ class OAuthCallbackView(View, OAuthMixin):
             )
 
         # Verifies if the service's user id was provided in the credentials,
-        # if it not provided fetches is by debugging the access token.
+        # if it is not provided the fetches is by debugging the access token.
+        access_token = credentials.get(self.client.access_token_label, None)
         service_uid = credentials.get(self.client.uid_label, None)
-        token_expiration = None
+        token_expiration = credentials.get(self.client.expiration_label, None)
 
+        # Calculates the token expiration date.
+        if token_expiration:
+            token_expiration = (timezone.now() +
+                timedelta(seconds=int(token_expiration)))
+
+        # Debugs the token.
         if not service_uid:
             token_is_valid, debugged_data = self.client.debug_access_token(
-                credentials[self.client.access_token_label])
+                access_token)
             if token_is_valid:
                 service_uid = debugged_data.get(self.client.uid_label)
-                token_expiration = debugged_data.get('expires_at')
 
         # Appends the response to the user session.
         self.session_put(**{
@@ -204,8 +211,8 @@ class OAuthCallbackView(View, OAuthMixin):
                 'access_token_secret')
 
         if self.client.oauth_version == 2:
-            profile.oauth_access_token_expires_at = datetime.fromtimestamp(
-                token_expiration) if token_expiration else None
+            profile.oauth_access_token_expires_at = (token_expiration if
+                token_expiration else None)
 
         profile.save()
 
