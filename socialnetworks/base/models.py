@@ -1,5 +1,5 @@
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -9,7 +9,7 @@ class BaseSocialProfile(models.Model):
 
     """
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         blank=True, null=True,
         verbose_name=_('user')
     )

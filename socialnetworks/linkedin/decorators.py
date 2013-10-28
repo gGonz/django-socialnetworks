@@ -5,8 +5,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 from socialnetworks.linkedin.clients import LinkedInClient
-from socialnetworks.linkedin.settings import (COOKIE_MAX_AGE,
-    SESSION_FIELDS, SESSION_KEY)
+from socialnetworks.linkedin.settings import (
+    COOKIE_MAX_AGE, SESSION_FIELDS, SESSION_KEY)
 
 
 def fetch_linkedin_data(function):
@@ -53,8 +53,11 @@ def fetch_linkedin_data(function):
                 # in a signed cookie that its valid only for the seconds
                 # specified in settings.
                 response = function(request, *args, **kwargs)
-                response.set_signed_cookie(SESSION_KEY, value=data,
-                    httponly=True, max_age=COOKIE_MAX_AGE)
+                response.set_signed_cookie(
+                    SESSION_KEY, value=data,
+                    httponly=True, max_age=COOKIE_MAX_AGE
+                )
+
                 return response
 
         # If there is no client for the current user but it has data stored
@@ -69,6 +72,7 @@ def fetch_linkedin_data(function):
             # Creates the response object and deletes the cookie from it.
             response = function(request, *args, **kwargs)
             response.delete_cookie(SESSION_KEY)
+
             return response
 
         return function(request, *args, **kwargs)

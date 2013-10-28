@@ -202,8 +202,10 @@ class BaseOAuthClient(object):
 
         url = self.service_api_url + api_endpoint
 
-        response = self.__request_get__(url, params=params,
-            auth=self.compose_auth(auth_params))
+        response = self.__request_get__(
+            url, params=params,
+            auth=self.compose_auth(auth_params)
+        )
 
         return response.json()
 
@@ -229,8 +231,10 @@ class BaseOAuthClient(object):
 
         url = self.service_api_url + api_endpoint
 
-        response = self.__request_post__(url, data=data, params=params,
-            auth=self.compose_auth(auth_params))
+        response = self.__request_post__(
+            url, data=data, params=params,
+            auth=self.compose_auth(auth_params)
+        )
 
         return response.json()
 
@@ -250,6 +254,7 @@ class OAuth1Client(BaseOAuthClient):
 
     def compose_auth(self, auth_params={}):
         auth_params.update({'client_secret': self.app_secret})
+
         return OAuth1(self.app_key, **auth_params)
 
     def get_request_token(self, callback=None):
@@ -257,12 +262,15 @@ class OAuth1Client(BaseOAuthClient):
         oauth = self.compose_auth()
 
         # Requesting and parsing the request token.
-        r = self.__request_post__(self.request_token_url, auth=oauth,
-            params={'oauth_callback': callback})
+        r = self.__request_post__(
+            self.request_token_url, auth=oauth,
+            params={'oauth_callback': callback}
+        )
+
         return self.parse_response(r.content)
 
     def get_access_token(self, request_token=None,
-        request_token_secret=None, verifier=None):
+                         request_token_secret=None, verifier=None):
         # Gets the authentication header.
         oauth = self.compose_auth({
             'resource_owner_key': request_token,
@@ -272,6 +280,7 @@ class OAuth1Client(BaseOAuthClient):
 
         # Requesting and parsing the access token.
         r = self.__request_post__(self.access_token_url, auth=oauth)
+
         return self.parse_response(r.content)
 
 
@@ -300,6 +309,5 @@ class OAuth2Client(BaseOAuthClient):
 
         # Requesting and parsing the access token.
         r = self.__request_post__(self.access_token_url, params=params)
-        print r.url
-        print r.content
+
         return self.parse_response(r.content)

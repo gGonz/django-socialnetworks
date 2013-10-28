@@ -9,20 +9,23 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def twitter_login(context, label=None, css_class=None):
+def facebook_login(context, label=None, css_class=None, icon_class=None):
     """
     Renders a 'Sign in with Twitter' button.
 
     """
     context['label'] = label or _('Sign in with Twitter')
-    context['css_class'] = css_class
     context['action'] = reverse('socialnetworks:twitter:login')
+    context['css_class'] = css_class
+    context['icon_class'] = icon_class
 
-    return template.loader.render_to_string('login_button.html', context)
+    return template.loader.render_to_string(
+        'twitter/login_button.html', context)
 
 
 @register.simple_tag(takes_context=True)
-def twitter_share(context, label=None, css_class=None, **kwargs):
+def facebook_share(context, label=None, css_class=None, icon_class=None,
+                   **kwargs):
     """
     Renders a 'Tweet' button to share content on Twitter.
 
@@ -55,11 +58,13 @@ def twitter_share(context, label=None, css_class=None, **kwargs):
     )
 
     # Preparing the url with the encoded parameters.
-    r = requests.Request(url='https://twitter.com/share',
-        params=kwargs).prepare()
+    r = requests.Request(
+        url='https://twitter.com/share', params=kwargs).prepare()
 
     context['label'] = label or _('Tweet')
     context['css_class'] = css_class
+    context['icon_class'] = icon_class
     context['script'] = base_script % {'__URL__': r.url}
 
-    return template.loader.render_to_string('share_button.html', context)
+    return template.loader.render_to_string(
+        'twitter/share_button.html', context)

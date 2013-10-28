@@ -5,7 +5,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 from socialnetworks.twitter.clients import TwitterClient
-from socialnetworks.twitter.settings import COOKIE_MAX_AGE, SESSION_KEY, SESSION_FIELDS
+from socialnetworks.twitter.settings import (
+    COOKIE_MAX_AGE, SESSION_KEY, SESSION_FIELDS)
 
 
 def fetch_twitter_data(function):
@@ -40,8 +41,8 @@ def fetch_twitter_data(function):
             else:
                 # Retrieves the data from Twitter.
                 r = client.get('account/verify_credentials.json')
-                data = dict(filter(lambda i: i[0] in
-                    SESSION_FIELDS, r.items()))
+                data = dict(filter(
+                    lambda i: i[0] in SESSION_FIELDS, r.items()))
 
                 # Protects the user potentially sensible data.
                 data = signing.dumps(data)
@@ -54,8 +55,11 @@ def fetch_twitter_data(function):
                 # in a signed cookie that its valid only for the seconds
                 # specified in settings.
                 response = function(request, *args, **kwargs)
-                response.set_signed_cookie(SESSION_KEY, value=data,
-                    httponly=True, max_age=COOKIE_MAX_AGE)
+                response.set_signed_cookie(
+                    SESSION_KEY, value=data,
+                    httponly=True, max_age=COOKIE_MAX_AGE
+                )
+
                 return response
 
         # If there is no client for the current user but it has data stored
@@ -70,6 +74,7 @@ def fetch_twitter_data(function):
             # Creates the response object and deletes the cookie from it.
             response = function(request, *args, **kwargs)
             response.delete_cookie(SESSION_KEY)
+
             return response
 
         return function(request, *args, **kwargs)

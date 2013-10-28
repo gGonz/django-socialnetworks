@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -9,8 +9,9 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View, TemplateView
 
-from socialnetworks.base.settings import (EMAIL_IS_USERNAME,
-    SETUP_FORM_CLASS, SETUP_TEMPLATE)
+from socialnetworks.base.settings import (
+    EMAIL_IS_USERNAME, SETUP_FORM_CLASS, SETUP_TEMPLATE
+)
 from socialnetworks.signals import connect, disconnect, login
 
 
@@ -70,6 +71,7 @@ class OAuthMixin(object):
         session = self.__get_session()
         value = session.pop(key, None)
         self.__set_session(session)
+
         return value
 
     def session_clear(self):
@@ -175,8 +177,8 @@ class OAuthCallbackView(View, OAuthMixin):
 
         # Calculates the token expiration date.
         if token_expiration:
-            token_expiration = (timezone.now() +
-                timedelta(seconds=int(token_expiration)))
+            token_expiration = (
+                timezone.now() + timedelta(seconds=int(token_expiration)))
 
         # Debugs the token.
         if not service_uid:
@@ -211,8 +213,8 @@ class OAuthCallbackView(View, OAuthMixin):
                 'access_token_secret')
 
         if self.client.oauth_version == 2:
-            profile.oauth_access_token_expires_at = (token_expiration if
-                token_expiration else None)
+            profile.oauth_access_token_expires_at = (
+                token_expiration if token_expiration else None)
 
         profile.save()
 
@@ -225,32 +227,38 @@ class OAuthCallbackView(View, OAuthMixin):
                 profile.save()
 
                 # Tells to the site that the user has connected its profile.
-                connect.send(sender=self, user=self.request.user,
-                    service=self.client.service_name.lower())
+                connect.send(
+                    sender=self, user=self.request.user,
+                    service=self.client.service_name.lower()
+                )
 
                 # Tells to the user that his connection was successful.
-                messages.success(request, _('Your %(service)s profile '
-                    'was successfully connected with your user account.') %
-                    {'service': self.client.service_name})
+                messages.success(request, _(
+                    'Your %(service)s profile was successfully connected '
+                    'with your user account.'
+                ) % {'service': self.client.service_name})
 
             else:
                 self.session_put(**{'new_user': True})
 
         elif (profile.user and profile.user != self.request.user and
-            self.request.user.is_authenticated()):
+                self.request.user.is_authenticated()):
 
             # Tells to the user that his connection was unsuccessful.
-            messages.error(request, _('This %(service)s profile is '
-                'already connected with another user account.') %
-                {'service': self.client.service_name})
+            messages.error(request, _(
+                'This %(service)s profile is already connected with another '
+                'user account.'
+            ) % {'service': self.client.service_name})
 
         else:
             # Logs the user in if it is not logged yet.
             self.client.login(request, self.session_get('service_uid'))
 
             # Tells to the site that the user was logged in.
-            login.send(sender=self, user=self.request.user,
-                service=self.client.service_name.lower())
+            login.send(
+                sender=self, user=self.request.user,
+                service=self.client.service_name.lower()
+            )
 
         return redirect(self.get_redirect_url())
 
@@ -295,7 +303,8 @@ class OAuthSetupView(TemplateView, OAuthMixin):
     def get(self, request, *args, **kwargs):
         # Protects the view to be accessed by non OAuth requests.
         if (request.user.is_authenticated() or
-            not self.session_get('service_uid')):
+                not self.session_get('service_uid')):
+
             return HttpResponseForbidden()
 
         # Fetches the current OAuth profile.
@@ -313,8 +322,9 @@ class OAuthSetupView(TemplateView, OAuthMixin):
             # If the data is incomplete then redirects the user to the final
             # setup form.
             if ('username' not in user_data or 'email' not in user_data or
-                [(k, v) for k, v in
-                user_data.items() if k in ['username', 'email'] and not v]):
+                    [(k, v) for k, v in user_data.items() if k in
+                        ['username', 'email'] and not v]):
+
                 return self.render_to_response(
                     self.get_context_data(**user_data))
 
@@ -336,15 +346,19 @@ class OAuthSetupView(TemplateView, OAuthMixin):
                 profile.save()
 
                 # Tells to the site that the user has connected its profile.
-                connect.send(sender=self, user=user,
-                    service=self.client.service_name.lower())
+                connect.send(
+                    sender=self, user=user,
+                    service=self.client.service_name.lower()
+                )
 
                 # Authenticates the new user.
                 self.client.login(request, self.session_get('service_uid'))
 
                 # Tells to the site that the user was logged in.
-                login.send(sender=self, user=user,
-                    service=self.client.service_name.lower())
+                login.send(
+                    sender=self, user=user,
+                    service=self.client.service_name.lower()
+                )
 
                 # Redirects the user to the proper url.
                 return redirect(self.get_redirect_url())
@@ -352,7 +366,8 @@ class OAuthSetupView(TemplateView, OAuthMixin):
     def post(self, request, *args, **kwargs):
         # Protects the view to be accessed by non OAuth requests.
         if (request.user.is_authenticated() or
-            not self.session_get('service_uid')):
+                not self.session_get('service_uid')):
+
             return HttpResponseForbidden()
 
         # Fetches the current OAuth profile.
@@ -379,15 +394,19 @@ class OAuthSetupView(TemplateView, OAuthMixin):
             profile.save()
 
             # Tells to the site that the user has connected its profile.
-            connect.send(sender=self, user=user,
-                service=self.client.service_name.lower())
+            connect.send(
+                sender=self, user=user,
+                service=self.client.service_name.lower()
+            )
 
             # Authenticates the new user.
             self.client.login(request, self.session_get('service_uid'))
 
             # Tells to the site that the user was logged in.
-            login.send(sender=self, user=user,
-                service=self.client.service_name.lower())
+            login.send(
+                sender=self, user=user,
+                service=self.client.service_name.lower()
+            )
 
             # Redirects the user to the proper url.
             return redirect(self.get_redirect_url())
@@ -418,12 +437,15 @@ class OAuthDisconnectView(View, OAuthMixin):
             profile.delete()
 
             # Tells to the site that the profile was disconnected.
-            disconnect.send(sender=self, user=user,
-                service=self.client.service_name.lower())
+            disconnect.send(
+                sender=self, user=user,
+                service=self.client.service_name.lower()
+            )
 
             # Tells to the user that the disconnection was successful.
-            messages.success(request, _('Your %(service)s profile was '
-                'successfully disconnected from your user account.') %
-                {'service': self.client.service_name})
+            messages.success(request, _(
+                'Your %(service)s profile was successfully disconnected from '
+                'your user account.'
+            ) % {'service': self.client.service_name})
 
         return redirect(request.POST.get('next', '/'))

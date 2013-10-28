@@ -8,21 +8,27 @@ from socialnetworks.base.settings import CONFIGURATION, COOKIE_MAX_AGE
 LINKEDIN = CONFIGURATION.get('LINKEDIN', None)
 
 if not LINKEDIN:
-    raise ImproperlyConfigured('You have socialnetworks.linkedin in your '
-        'ISTALLED_APPS, but you do not specify any "LINKEDIN" settings '
-        'inside SOCIALNETWORK_CONFIGURATION.')
+    raise ImproperlyConfigured(
+        'You have socialnetworks.linkedin in your ISTALLED_APPS, but you do '
+        'not specify any "LINKEDIN" settings inside '
+        'SOCIALNETWORK_CONFIGURATION.'
+    )
 
 else:
     APP_ID = LINKEDIN.get('APP_ID', None)
     APP_SECRET = LINKEDIN.get('APP_SECRET', None)
     SESSION_KEY = LINKEDIN.get('SESSION_KEY', 'dsnli')
-    SESSION_FIELDS = ','.join(LINKEDIN.get('SESSION_FIELDS',
-        ['firstName', 'lastName']))
+    SESSION_FIELDS = ','.join(LINKEDIN.get(
+        'SESSION_FIELDS', ['firstName', 'lastName']))
 
     if not APP_ID:
-        raise ImproperlyConfigured('A proper "APP_ID" must be specified '
-            'in order to use socialnetworks.linkedin module.')
+        raise ImproperlyConfigured(
+            'A proper "APP_ID" must be specified in order to use '
+            'socialnetworks.linkedin module.'
+        )
 
     if not APP_SECRET:
-        raise ImproperlyConfigured('A proper "APP_SECRET" must be specified '
-            'in order to use socialnetworks.linkedin module.')
+        raise ImproperlyConfigured(
+            'A proper "APP_SECRET" must be specified in order to use '
+            'socialnetworks.linkedin module.'
+        )

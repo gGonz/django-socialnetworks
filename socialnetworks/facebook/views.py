@@ -1,7 +1,9 @@
 from django.core.urlresolvers import reverse
 
-from socialnetworks.base.views import (OAuthDialogRedirectView,
-    OAuthCallbackView, OAuthSetupView, OAuthDisconnectView)
+from socialnetworks.base.views import (
+    OAuthDialogRedirectView, OAuthCallbackView,
+    OAuthSetupView, OAuthDisconnectView
+)
 from socialnetworks.facebook.clients import FacebookClient
 
 

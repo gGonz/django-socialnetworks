@@ -33,16 +33,20 @@ class FacebookClient(OAuth2Client):
                 'grant_type': 'client_credentials'
             }
             r = self.__request_get__(self.access_token_url, params=params)
+
             return self.parse_response(r.content)['access_token']
 
     def debug_access_token(self, token=None):
         if self.profile and not token:
             token = self.profile.oauth_access_token
 
-        r = self.get(self.token_debug_url, params={'input_token': token},
-            auth_params={'access_token': self.get_app_access_token()})
+        r = self.get(
+            self.token_debug_url, params={'input_token': token},
+            auth_params={'access_token': self.get_app_access_token()}
+        )
 
         if 'data' in r and r['data']['is_valid']:
             return (True, r['data'])
+
         else:
             return (False, None)

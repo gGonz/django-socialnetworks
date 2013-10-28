@@ -1,37 +1,47 @@
+import uuid
+
 from django.core.urlresolvers import reverse
 
 from socialnetworks.base.views import (
     OAuthDialogRedirectView, OAuthCallbackView,
     OAuthSetupView, OAuthDisconnectView
 )
-from socialnetworks.twitter.clients import TwitterClient
+from socialnetworks.github.clients import GitHubClient
 
 
-class TwitterDialogRedirect(OAuthDialogRedirectView):
-    client = TwitterClient()
+class GitHubDialogRedirect(OAuthDialogRedirectView):
+    client = GitHubClient()
 
     def get_callback_url(self):
         return self.client.get_domain() + reverse(
-            'socialnetworks:twitter:callback')
+            'socialnetworks:github:callback')
 
     def get_redirect_url(self):
         return self.client.enconde_url(self.client.authorization_url, {
-            'oauth_token': self.session_get('request_token')})
+            'client_id': self.client.app_key,
+            'redirect_uri': self.get_callback_url(),
+            'scope': self.client.scope,
+            'state': uuid.uuid4()
+        })
 
 
-class TwitterCallback(OAuthCallbackView):
-    client = TwitterClient()
+class GitHubCallback(OAuthCallbackView):
+    client = GitHubClient()
+
+    def get_callback_url(self):
+        return self.client.get_domain() + reverse(
+            'socialnetworks:github:callback')
 
     def get_redirect_url(self):
         if self.session_get('new_user'):
-            return reverse('socialnetworks:twitter:setup')
+            return reverse('socialnetworks:github:setup')
 
         else:
             return self.session_pop('next') or '/'
 
 
-class TwitterSetupView(OAuthSetupView):
-    client = TwitterClient()
+class GitHubSetup(OAuthSetupView):
+    client = GitHubClient()
 
     def get_redirect_url(self):
         return self.session_pop('next') or '/'
@@ -41,16 +51,17 @@ class TwitterSetupView(OAuthSetupView):
         profile = self.get_profile()
 
         # Creates a client that can make signed requests.
-        tw = TwitterClient(profile)
+        gh = GitHubClient(profile)
 
-        # Fetches the user's data from Twitter.
-        data = tw.get(self.client.token_debug_url)
+        # Defines the fields to retrieve.
+        #fields = ','.join(['first_name', 'last_name', 'email', 'username'])
+        data = gh.get('user')
 
-        # Parses the "name" of Twitter, simply splits the name by white
+        # Parses the "name" of GitHub, simply splits the name by white
         # spaces, the first name is the first element of the resulting list,
         # the last name are the remaining elements joined again by white
         # spaces. If there are not white spaces in the name, then the first
-        # name is the name returned by Twitter and the last name is
+        # name is the name returned by GitHub and the last name is
         # left blak.
         name = data['name']
         first_name = name.split(' ')[0] if ' ' in name else name
@@ -59,8 +70,9 @@ class TwitterSetupView(OAuthSetupView):
         return {
             'first_name': first_name,
             'last_name': last_name,
+            'email': data['email']
         }
 
 
-class TwitterOAuthDisconnect(OAuthDisconnectView):
-    client = TwitterClient()
+class GitHubOAuthDisconnect(OAuthDisconnectView):
+    client = GitHubClient()

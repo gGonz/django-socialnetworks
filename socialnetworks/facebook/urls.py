@@ -3,17 +3,14 @@ from django.conf.urls import url, patterns
 from socialnetworks.facebook import views
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^login/$',
-        views.FacebookDialogRedirect.as_view(), name='login'
-    ),
+        views.FacebookDialogRedirect.as_view(), name='login'),
     url(r'^callback/$',
-        views.FacebookCallback.as_view(), name='callback'
-    ),
+        views.FacebookCallback.as_view(), name='callback'),
     url(r'^setup/$',
-        views.FacebookSetup.as_view(), name='setup'
-    ),
+        views.FacebookSetup.as_view(), name='setup'),
     url(r'^disconnect/$',
-        views.FacebookOAuthDisconnect.as_view(), name='disconnect'
-    ),
+        views.FacebookOAuthDisconnect.as_view(), name='disconnect'),
 )

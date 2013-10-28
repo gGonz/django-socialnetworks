@@ -15,11 +15,11 @@ class SocialUserCreationForm(forms.ModelForm):
         max_length=30,
         regex=r'^[\w.@+-]+$',
         help_text=_('Required. 30 characters or fewer. Letters, digits and '
-            '@/./+/-/_ only.'),
+                    '@/./+/-/_ only.'),
         error_messages={'invalid': _('This value may contain only letters, '
-            'numbers and @/./+/-/_ characters.')},
+                        'numbers and @/./+/-/_ characters.')},
         label=_('username').capitalize()
-        )
+    )
 
     email = forms.EmailField(
         required=EMAIL_IS_USERNAME,
@@ -52,8 +52,10 @@ class SocialUserCreationForm(forms.ModelForm):
             except User.DoesNotExist:
                 return self.cleaned_data['username']
 
-            raise forms.ValidationError(_('This username is already '
-                'in use, please provide a different username.'))
+            raise forms.ValidationError(_(
+                'This username is already in use, please provide a '
+                'different username.'
+            ))
 
     def clean_email(self):
         """
@@ -68,5 +70,7 @@ class SocialUserCreationForm(forms.ModelForm):
             except User.DoesNotExist:
                 return self.cleaned_data['email']
 
-            raise forms.ValidationError(_('This email address is already '
-                'in use, please provide a different email address.'))
+            raise forms.ValidationError(_(
+                'This email address is already in use, please provide a '
+                'different email address.'
+            ))

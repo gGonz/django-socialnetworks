@@ -5,8 +5,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 from socialnetworks.facebook.clients import FacebookClient
-from socialnetworks.facebook.settings import (COOKIE_MAX_AGE,
-    SESSION_FIELDS, SESSION_KEY)
+from socialnetworks.facebook.settings import (
+    COOKIE_MAX_AGE, SESSION_FIELDS, SESSION_KEY)
 
 
 def fetch_facebook_data(function):
@@ -35,6 +35,7 @@ def fetch_facebook_data(function):
         # requests a new token.
         if client and SESSION_KEY not in request.COOKIES:
             if not client.debug_access_token():
+
                 return HttpResponseRedirect(reverse(
                     'socialnetworks:facebook:login'))
 
@@ -53,8 +54,11 @@ def fetch_facebook_data(function):
                 # in a signed cookie that its valid only for the seconds
                 # specified in settings.
                 response = function(request, *args, **kwargs)
-                response.set_signed_cookie(SESSION_KEY, value=data,
-                    httponly=True, max_age=COOKIE_MAX_AGE)
+                response.set_signed_cookie(
+                    SESSION_KEY, value=data,
+                    httponly=True, max_age=COOKIE_MAX_AGE
+                )
+
                 return response
 
         # If there is no client for the current user but it has data stored
@@ -69,6 +73,7 @@ def fetch_facebook_data(function):
             # Creates the response object and deletes the cookie from it.
             response = function(request, *args, **kwargs)
             response.delete_cookie(SESSION_KEY)
+
             return response
 
         return function(request, *args, **kwargs)

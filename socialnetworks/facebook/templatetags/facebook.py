@@ -9,7 +9,7 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def facebook_login(context, label=None, css_class=None):
+def facebook_login(context, label=None, css_class=None, icon_class=None):
     """
     Renders a 'Sign in with Facebook' button.
 
@@ -17,12 +17,15 @@ def facebook_login(context, label=None, css_class=None):
     context['label'] = label or _('Sign in with Facebook')
     context['action'] = reverse('socialnetworks:facebook:login')
     context['css_class'] = css_class
+    context['icon_class'] = icon_class
 
-    return template.loader.render_to_string('login_button.html', context)
+    return template.loader.render_to_string(
+        'facebook/login_button.html', context)
 
 
 @register.simple_tag(takes_context=True)
-def facebook_share(context, label=None, css_class=None, **kwargs):
+def facebook_share(context, label=None, css_class=None, icon_class=None,
+                   **kwargs):
     """
     Renders a 'Share' button to share content on Facebook.
 
@@ -71,9 +74,11 @@ def facebook_share(context, label=None, css_class=None, **kwargs):
 
     context['label'] = label or _('Share')
     context['css_class'] = css_class
+    context['icon_class'] = icon_class
     context['script'] = base_script % {
         '__APPID__': APP_ID,
         '__KWARGS__': ','.join(["%s:'%s'" % i for i in kwargs.items()])
     }
 
-    return template.loader.render_to_string('share_button.html', context)
+    return template.loader.render_to_string(
+        'facebook/share_button.html', context)

@@ -4,23 +4,34 @@ from django.conf.urls import url, patterns, include
 
 urlpatterns = patterns('',)
 
+
 if 'socialnetworks.facebook' in settings.INSTALLED_APPS:
-    urlpatterns = urlpatterns + patterns('',
+    urlpatterns = urlpatterns + patterns(
+        '',
         url(r'^facebook/',
-            include('socialnetworks.facebook.urls', namespace='facebook')
-        ),
+            include('socialnetworks.facebook.urls', namespace='facebook')),
     )
+
+
+if 'socialnetworks.github' in settings.INSTALLED_APPS:
+    urlpatterns = urlpatterns + patterns(
+        '',
+        url(r'^github/',
+            include('socialnetworks.github.urls', namespace='github')),
+    )
+
 
 if 'socialnetworks.linkedin' in settings.INSTALLED_APPS:
-    urlpatterns = urlpatterns + patterns('',
+    urlpatterns = urlpatterns + patterns(
+        '',
         url(r'^linkedin/',
-            include('socialnetworks.linkedin.urls', namespace='linkedin')
-        ),
+            include('socialnetworks.linkedin.urls', namespace='linkedin')),
     )
 
+
 if 'socialnetworks.twitter' in settings.INSTALLED_APPS:
-    urlpatterns = urlpatterns + patterns('',
+    urlpatterns = urlpatterns + patterns(
+        '',
         url(r'^twitter/',
-            include('socialnetworks.twitter.urls', namespace='twitter')
-        ),
+            include('socialnetworks.twitter.urls', namespace='twitter')),
     )

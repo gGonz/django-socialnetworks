@@ -3,17 +3,14 @@ from django.conf.urls import url, patterns
 from socialnetworks.twitter import views
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^login/$',
-        views.TwitterDialogRedirect.as_view(), name='login'
-    ),
+        views.TwitterDialogRedirect.as_view(), name='login'),
     url(r'^callback/$',
-        views.TwitterCallback.as_view(), name='callback'
-    ),
+        views.TwitterCallback.as_view(), name='callback'),
     url(r'^setup/$',
-        views.TwitterSetupView.as_view(), name='setup'
-    ),
+        views.TwitterSetupView.as_view(), name='setup'),
     url(r'^disconnect/$',
-        views.TwitterOAuthDisconnect.as_view(), name='disconnect'
-    ),
+        views.TwitterOAuthDisconnect.as_view(), name='disconnect'),
 )

@@ -15,8 +15,8 @@ class BaseSocialBackend(ModelBackend):
     def authenticate(self, service_uid):
         try:
             profile = self.model.objects.get(
-                service_uid=service_uid
-            )
+                service_uid=service_uid)
+
             return profile.user
 
         except self.model.DoesNotExist:
