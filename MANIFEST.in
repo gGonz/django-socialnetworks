@@ -1,4 +1,4 @@
 include CHANGELOG.md
 include LICENSE
-recursive-include socialnetwork/locale *
-recursive-include socialnetwork *.html
+recursive-include socialnetworks/locale *
+recursive-include socialnetworks *.html
