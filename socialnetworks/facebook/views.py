@@ -15,7 +15,7 @@ class FacebookDialogRedirect(OAuthDialogRedirectView):
             'socialnetworks:facebook:callback')
 
     def get_redirect_url(self):
-        return self.client.enconde_url(self.client.authorization_url, {
+        return self.client.encode_url(self.client.authorization_url, {
             'client_id': self.client.app_key,
             'redirect_uri': self.get_callback_url(),
             'scope': self.client.scope,

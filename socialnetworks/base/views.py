@@ -1,4 +1,5 @@
 from datetime import timedelta
+from urlparse import urlparse, parse_qs
 
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -120,16 +121,20 @@ class OAuthDialogRedirectView(View, OAuthMixin):
     authorization dialog.
 
     """
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # Clears the current session to avoid conflicts.
         self.session_clear()
 
         # Fetches the url where the user will be redirected when the
         # flow ends and stores it in the user's session.
-        if 'next' in request.GET:
-            self.session_put(**{'next': request.GET['next']})
+        if 'next' in request.POST:
+            self.session_put(**{'next': request.POST['next']})
+
         else:
             self.session_put(**{'next': '/'})
+
+        if 'only_login' in request.POST:
+            self.session_put(**{'only_login': request.POST['only_login']})
 
         if self.client.oauth_version == 1:
             # Gets the OAuth request token.
@@ -196,10 +201,33 @@ class OAuthCallbackView(View, OAuthMixin):
             'service_uid': service_uid
         })
 
-        # Gets or creates the service's profile.
-        profile, created = self.client.model.objects.get_or_create(
-            service_uid=self.session_get('service_uid')
-        )
+        # Gets the lookups to retrieve or create the profile.
+        lookup_kwargs = {
+            'service_uid': self.session_get('service_uid')
+        }
+
+        # Tries to retrieve the profile.
+        try:
+            profile = self.client.model.objects.get(**lookup_kwargs)
+            created = False
+
+        except self.client.model.DoesNotExist:
+            profile = None
+
+        # If there is no profile and the button clicked was only login
+        # redirects the user to the page where it comes from, otherwise
+        # creates a new profile with the given data.
+        if not profile:
+            if self.session_get('only_login'):
+                parsed = urlparse(self.session_pop('only_login'))
+                params = parse_qs(parsed.query)
+                params.update(oauth_error=True)
+
+                return redirect(self.client.encode_url(parsed.path, params))
+
+            else:
+                profile = self.client.model.objects.create(**lookup_kwargs)
+                created = True
 
         # Updates the profile to make sure that we have always the most
         # recent token.

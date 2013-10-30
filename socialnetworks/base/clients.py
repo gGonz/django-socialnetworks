@@ -84,13 +84,19 @@ class BaseOAuthClient(object):
         protocol = 'http://'
         return protocol + Site.objects.get_current().domain
 
-    def enconde_url(self, url, params={}):
+    def encode_url(self, url, params={}):
         """
         Returns the encoded url with thw given parameters.
 
         """
-        r = requests.Request(url=url, params=params).prepare()
-        return r.url
+        try:
+            r = requests.Request(url=url, params=params).prepare()
+            return r.url
+
+        except:
+            encoder = requests.models.RequestEncodingMixin()
+            enc_params = encoder._encode_params(params)
+            return url + '?' + enc_params
 
     def login(self, request, uid):
         """

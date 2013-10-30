@@ -15,7 +15,7 @@ class TwitterDialogRedirect(OAuthDialogRedirectView):
             'socialnetworks:twitter:callback')
 
     def get_redirect_url(self):
-        return self.client.enconde_url(self.client.authorization_url, {
+        return self.client.encode_url(self.client.authorization_url, {
             'oauth_token': self.session_get('request_token')})
 
 
