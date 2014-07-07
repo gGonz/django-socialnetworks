@@ -29,6 +29,14 @@ if 'socialnetworks.linkedin' in settings.INSTALLED_APPS:
     )
 
 
+if 'socialnetworks.paypal' in settings.INSTALLED_APPS:
+    urlpatterns = urlpatterns + patterns(
+        '',
+        url(r'^paypal/',
+            include('socialnetworks.paypal.urls', namespace='paypal')),
+    )
+
+
 if 'socialnetworks.twitter' in settings.INSTALLED_APPS:
     urlpatterns = urlpatterns + patterns(
         '',
