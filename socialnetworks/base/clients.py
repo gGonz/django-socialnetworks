@@ -110,8 +110,11 @@ class BaseOAuthClient(object):
         Returns a dictionary of the parsed response.
 
         """
-        parsed = dict(parse_qsl(data))
-        return parsed or json.loads(data)
+        try:
+            return json.loads(data)
+
+        except:
+            return dict(parse_qsl(data))
 
     def get_auth_params(self):
         """

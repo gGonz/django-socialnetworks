@@ -14,7 +14,7 @@ class BaseSocialProfile(models.Model):
         verbose_name=_('user')
     )
     service_uid = models.CharField(
-        max_length=80,
+        max_length=255,
         unique=True,
         blank=True, null=True,
         verbose_name=_('uid')
