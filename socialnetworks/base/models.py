@@ -19,6 +19,12 @@ class BaseSocialProfile(models.Model):
         blank=True, null=True,
         verbose_name=_('uid')
     )
+
+    created_date = models.DateTimeField(
+        blank=True, null=True,
+        auto_now=False, auto_now_add=True,
+        verbose_name=_('created date')
+    )
     last_modified = models.DateTimeField(
         null=True, blank=True,
         auto_now_add=True, auto_now=True,
