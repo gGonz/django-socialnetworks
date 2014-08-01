@@ -22,6 +22,7 @@ setup(
         'Django >= 1.5',
         'requests',
         'requests_oauthlib',
+        'unidecode',
     ],
     packages=find_packages(),
     include_package_data=True,

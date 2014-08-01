@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0 (2014-07-31)
+
+Features:
+
++ Urls no longer care about user assigned namespaces.
++ Added support for a custom setup url for integration with AJAX views.
++ Generate suggested username is it was not provided by the service API .
+
+Bugfixes:
+
++ Whole code clenaup and better PEP8 complaint.
++ Change all imports for relative imports.
++ Fixed the algorithm to link with an existing user or creating a new one.
+
 ## 0.2.0 (2014-07-07)
 
 Features:
