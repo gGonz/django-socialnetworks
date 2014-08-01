@@ -121,6 +121,7 @@ App specific:
 + SCOPE: A list of strings representing the scope of the tokens to be generated, you must check the available scopesprovided by the service you are using and it may require your app to be configured to request these scopes. By default it tries to request the email in the way it is provided specifically by each service.
 + SESSION_KEY: The key to be used to store the relevant OAuth process data in the user's session. Defaults to 'dsn' + the representative letters of each service, ie, 'dsnfb', 'dsntw', etc.
 + SESSION_FIELDS: The retrieved fields from the service's API that will be stored in the user's session if you are using cookies to store social account data.
++ SETUP_URL_NAME: A custom url name for redirect the users to complete the account setup. This url name must be provided in the format 'namespace:url-name' since it will be resolved by using django.core.urlresolvers.reverse. This setting is useful if you want to complete the setup in an AJAX view. When the user is redirected to this url a 'dsnstp' cookie containing the user's data retrived from the service's API wit a max age of two minutes (120 seconds). Note that this cookie is a base64 encoded JSON dumped string.
 
 Service specific:
 
