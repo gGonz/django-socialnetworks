@@ -5,13 +5,11 @@ from requests_oauthlib import OAuth1, OAuth2
 from urlparse import parse_qsl
 
 from django.contrib.auth import authenticate, login
-from django.contrib.sites.models import Site
 
 
 class BaseOAuthClient(object):
     """
     Base class that defines the client for OAuth services.
-
     """
     # The version of the OAuth protocol used by the client.
     oauth_version = None
@@ -76,18 +74,23 @@ class BaseOAuthClient(object):
     def __init__(self, profile=None):
         self.profile = profile if profile else None
 
-    def get_domain(self):
+    def _get(self, url, **kwargs):
         """
-        Returns the current site domain.
+        Base method to perform GET requests by wrapping the
+        'requests' python library.
+        """
+        return requests.get(url, **kwargs)
 
+    def _post(self, url, data=None, **kwargs):
         """
-        protocol = 'http://'
-        return protocol + Site.objects.get_current().domain
+        Base method to perform POST requests by wrapping the
+        'requests' python library.
+        """
+        return requests.get(url, data=data, **kwargs)
 
     def encode_url(self, url, params={}):
         """
         Returns the encoded url with thw given parameters.
-
         """
         try:
             r = requests.Request(url=url, params=params).prepare()
@@ -101,14 +104,12 @@ class BaseOAuthClient(object):
     def login(self, request, uid):
         """
         Logs the user in.
-
         """
         login(request, authenticate(**{'service_uid': uid}))
 
     def parse_response(self, data):
         """
         Returns a dictionary of the parsed response.
-
         """
         try:
             return json.loads(data)
@@ -120,7 +121,6 @@ class BaseOAuthClient(object):
         """
         Returns a dictionary containing the proper parameters to compose
         the OAuth auth header.
-
         """
         if self.profile:
             if self.oauth_version == 1:
@@ -144,7 +144,15 @@ class BaseOAuthClient(object):
         Returns the auth header for the OAuth requests.
 
         Subclasses must implement this method.
+        """
+        raise NotImplementedError
 
+    def compose_authorization_url(self, callback_url):
+        """
+        Return the url where the user should be redirected to request
+        authorization for its account details.
+
+        Subclasses must implement this method.
         """
         raise NotImplementedError
 
@@ -154,7 +162,6 @@ class BaseOAuthClient(object):
         returns a dictionary with the parsed token.
 
         OAuth1 subclasses must implement this method.
-
         """
         raise NotImplementedError
 
@@ -164,7 +171,6 @@ class BaseOAuthClient(object):
         returns a dictionary with the parsed token.
 
         Subclasses must implement this method.
-
         """
         raise NotImplementedError
 
@@ -173,23 +179,17 @@ class BaseOAuthClient(object):
         Connects with the service to check if the access token is valid and
         returns a tuple where the first element is a boolean indicating the
         validity and the second is the response from the service.
-
         """
         raise NotImplementedError
 
-    def __request_get__(self, url, **kwargs):
+    def retrieve_user_data(self, profile=None):
         """
-        Primitive to make a get request.
+        Return the available user data that can be retrieved from the
+        service's API in a python/django friendly format.
 
+        Subclasses must implement this method.
         """
-        return requests.get(url, **kwargs)
-
-    def __request_post__(self, url, data=None, **kwargs):
-        """
-        Primitive to make a post request.
-
-        """
-        return requests.get(url, data=data, **kwargs)
+        raise NotImplementedError
 
     def get(self, api_endpoint, params={}, auth_params=None):
         """
@@ -204,14 +204,13 @@ class BaseOAuthClient(object):
                 will be passed to the API.
             - auth_params: a dictionary containing all the extra parameters
                 needed to compose the OAuth auth header.
-
         """
         if self.profile and not auth_params:
             auth_params = self.get_auth_params()
 
         url = self.service_api_url + api_endpoint
 
-        response = self.__request_get__(
+        response = self._get(
             url, params=params,
             auth=self.compose_auth(auth_params)
         )
@@ -233,14 +232,13 @@ class BaseOAuthClient(object):
                 will be passed to the API.
             - auth_params: a dictionary containing all the extra parameters
                 needed to compose the OAuth auth header.
-
         """
         if self.profile and not auth_params:
             auth_params = self.get_auth_params()
 
         url = self.service_api_url + api_endpoint
 
-        response = self.__request_post__(
+        response = self._post(
             url, data=data, params=params,
             auth=self.compose_auth(auth_params)
         )
@@ -251,7 +249,6 @@ class BaseOAuthClient(object):
 class OAuth1Client(BaseOAuthClient):
     """
     Base client for OAuth1 services.
-
     """
     oauth_version = 1
     verifier_label = 'oauth_verifier'
@@ -271,7 +268,7 @@ class OAuth1Client(BaseOAuthClient):
         oauth = self.compose_auth()
 
         # Requesting and parsing the request token.
-        r = self.__request_post__(
+        r = self._post(
             self.request_token_url, auth=oauth,
             params={'oauth_callback': callback}
         )
@@ -288,7 +285,7 @@ class OAuth1Client(BaseOAuthClient):
         })
 
         # Requesting and parsing the access token.
-        r = self.__request_post__(self.access_token_url, auth=oauth)
+        r = self._post(self.access_token_url, auth=oauth)
 
         return self.parse_response(r.content)
 
@@ -296,7 +293,6 @@ class OAuth1Client(BaseOAuthClient):
 class OAuth2Client(BaseOAuthClient):
     """
     Base client for OAuth2 services.
-
     """
     oauth_version = 2
     verifier_label = 'code'
@@ -317,6 +313,6 @@ class OAuth2Client(BaseOAuthClient):
         }
 
         # Requesting and parsing the access token.
-        r = self.__request_post__(self.access_token_url, params=params)
+        r = self._post(self.access_token_url, params=params)
 
         return self.parse_response(r.content)

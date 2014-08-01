@@ -11,7 +11,6 @@ register = template.Library()
 def gravatar(context, user=None, email=None, gid=None, size=40, default=''):
     """
     Retrieves the gravatar url from a given user, email or hash.
-
     """
     gravatar_url = 'http://www.gravatar.com/avatar/'
 

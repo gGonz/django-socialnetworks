@@ -1,6 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from socialnetworks.base.settings import CONFIGURATION, COOKIE_MAX_AGE
+from ..core.settings import CONFIGURATION, COOKIE_MAX_AGE
 
 
 # Tries to get the Twitter configuration, if the configuration is not
@@ -19,6 +19,7 @@ else:
     APP_SECRET = TWITTER.get('APP_SECRET', None)
     SESSION_KEY = TWITTER.get('SESSION_KEY', 'dsntw')
     SESSION_FIELDS = TWITTER.get('SESSION_FIELDS', ['screen_name', 'name'])
+    SETUP_URL_NAME = TWITTER.get('SETUP_URL_NAME', None)
 
     if not APP_ID:
         raise ImproperlyConfigured(

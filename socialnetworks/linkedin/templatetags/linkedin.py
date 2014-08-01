@@ -1,7 +1,7 @@
 from django import template
 from django.core.urlresolvers import reverse
 
-from socialnetworks.base.defaults import (
+from ..core.defaults import (
     DEFAULT_ERROR_MESSAGE, DEFAULT_LOGIN_LABEL, DEFAULT_SIGNIN_LABEL)
 
 

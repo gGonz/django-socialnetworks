@@ -1,9 +1,8 @@
 from django import template
 from django.core.urlresolvers import reverse
 
-from ..base.defaults import (
-    DEFAULT_ERROR_MESSAGE, DEFAULT_LOGIN_LABEL, DEFAULT_SIGNIN_LABEL
-)
+from ..core.defaults import (
+    DEFAULT_ERROR_MESSAGE, DEFAULT_LOGIN_LABEL, DEFAULT_SIGNIN_LABEL)
 
 
 register = template.Library()
@@ -28,7 +27,6 @@ def paypal_login(context, label=None, css_class=None, icon_class=None,
             message will be shown.
         - error_message: text to show as login error, if applicable.
         - error_class: css class to render the error message, if applicable.
-
     """
     replacements = {
         'service': 'PayPal'

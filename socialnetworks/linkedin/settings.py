@@ -1,6 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from socialnetworks.base.settings import CONFIGURATION, COOKIE_MAX_AGE
+from ..core.settings import CONFIGURATION, COOKIE_MAX_AGE
 
 
 # Tries to get the LINKEDIN configuration, if the configuration is not
@@ -20,6 +20,7 @@ else:
     SESSION_KEY = LINKEDIN.get('SESSION_KEY', 'dsnli')
     SESSION_FIELDS = ','.join(LINKEDIN.get(
         'SESSION_FIELDS', ['firstName', 'lastName']))
+    SETUP_URL_NAME = LINKEDIN.get('SETUP_URL_NAME', None)
 
     if not APP_ID:
         raise ImproperlyConfigured(

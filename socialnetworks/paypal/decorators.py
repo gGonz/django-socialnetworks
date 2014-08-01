@@ -12,7 +12,6 @@ def fetch_paypal_data(function):
     """
     Decorator that extends a view to allow it to fetch the user's
     data from PayPal.
-
     """
     @wraps(function)
     def function_wrapper(request, *args, **kwargs):

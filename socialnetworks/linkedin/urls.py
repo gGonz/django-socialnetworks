@@ -1,6 +1,6 @@
 from django.conf.urls import url, patterns
 
-from socialnetworks.linkedin import views
+from . import views
 
 
 urlpatterns = patterns(

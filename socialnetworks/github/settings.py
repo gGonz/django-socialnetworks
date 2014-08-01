@@ -1,6 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from socialnetworks.base.settings import CONFIGURATION, COOKIE_MAX_AGE
+from ..core.settings import CONFIGURATION, COOKIE_MAX_AGE
 
 
 # Tries to get the GitHub configuration, if the configuration is not
@@ -21,6 +21,7 @@ else:
     SCOPE = ','.join(GITHUB.get('SCOPE', ['email']))
     SESSION_KEY = GITHUB.get('SESSION_KEY', 'dsnfb')
     SESSION_FIELDS = ','.join(GITHUB.get('SESSION_FIELDS', []))
+    SETUP_URL_NAME = GITHUB.get('SETUP_URL_NAME', None)
 
     if not APP_ID:
         raise ImproperlyConfigured(

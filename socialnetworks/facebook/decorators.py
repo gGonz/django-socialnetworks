@@ -4,16 +4,14 @@ from django.core import signing
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
-from socialnetworks.facebook.clients import FacebookClient
-from socialnetworks.facebook.settings import (
-    COOKIE_MAX_AGE, SESSION_FIELDS, SESSION_KEY)
+from .clients import FacebookClient
+from .settings import COOKIE_MAX_AGE, SESSION_FIELDS, SESSION_KEY
 
 
 def fetch_facebook_data(function):
     """
     Decorator that extends a view to allow it to fetch the user's
     data from Facebook.
-
     """
     @wraps(function)
     def function_wrapper(request, *args, **kwargs):

@@ -2,9 +2,9 @@ from django import template
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from socialnetworks.base.defaults import (
+from .settings import APP_ID
+from ..core.defaults import (
     DEFAULT_ERROR_MESSAGE, DEFAULT_LOGIN_LABEL, DEFAULT_SIGNIN_LABEL)
-from socialnetworks.facebook.settings import APP_ID
 
 
 register = template.Library()
@@ -29,7 +29,6 @@ def facebook_login(context, label=None, css_class=None, icon_class=None,
             message will be shown.
         - error_message: text to show as login error, if applicable.
         - error_class: css class to render the error message, if applicable.
-
     """
     replacements = {
         'service': 'Facebook'
@@ -87,7 +86,6 @@ def facebook_share(context, label=None, css_class=None, icon_class=None,
 
     Please visit https://developers.facebook.com/docs/reference/dialogs/feed/
     for a detailed reference of the supported arguments by Facebook.
-
     """
     # Base javascript for the button.
     base_script = (

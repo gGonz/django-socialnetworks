@@ -1,6 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from ..base.settings import CONFIGURATION, COOKIE_MAX_AGE
+from ..core.settings import CONFIGURATION, COOKIE_MAX_AGE
 
 
 # Tries to get the PayPal configuration, if the configuration is not
@@ -22,6 +22,7 @@ else:
     SESSION_KEY = PAYPAL.get('SESSION_KEY', 'dsnpp')
     SESSION_FIELDS = ','.join(PAYPAL.get('SESSION_FIELDS', []))
     IS_LIVE = PAYPAL.get('IS_LIVE', False)
+    SETUP_URL_NAME = PAYPAL.get('SETUP_URL_NAME', None)
 
     if not APP_ID:
         raise ImproperlyConfigured(

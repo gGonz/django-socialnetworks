@@ -1,6 +1,9 @@
-from socialnetworks.base.backends import BaseSocialBackend
-from socialnetworks.github.models import GitHubOAuthProfile
+from .models import GitHubOAuthProfile
+from ..core.backends import BaseSocialBackend
 
 
 class GitHubBackend(BaseSocialBackend):
+    """
+    Backend to handle login with GitHub.
+    """
     model = GitHubOAuthProfile

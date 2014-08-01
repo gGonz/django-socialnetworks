@@ -1,6 +1,9 @@
-from socialnetworks.base.backends import BaseSocialBackend
-from socialnetworks.facebook.models import FacebookOAuthProfile
+from .models import FacebookOAuthProfile
+from ..core.backends import BaseSocialBackend
 
 
 class FacebookBackend(BaseSocialBackend):
+    """
+    Backend to handle login with Facebook.
+    """
     model = FacebookOAuthProfile

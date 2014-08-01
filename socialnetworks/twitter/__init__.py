@@ -1,3 +1,3 @@
-from socialnetworks.twitter.clients import TwitterClient
-from socialnetworks.twitter.decorators import fetch_twitter_data
-from socialnetworks.twitter.utils import read_twitter_data
+from .clients import TwitterClient
+from .decorators import fetch_twitter_data
+from .utils import read_twitter_data

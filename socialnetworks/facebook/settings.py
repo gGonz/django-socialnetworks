@@ -1,6 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from socialnetworks.base.settings import CONFIGURATION, COOKIE_MAX_AGE
+from ..core.settings import CONFIGURATION, COOKIE_MAX_AGE
 
 
 # Tries to get the Facebook configuration, if the configuration is not
@@ -21,6 +21,7 @@ else:
     SCOPE = ','.join(FACEBOOK.get('SCOPE', ['email']))
     SESSION_KEY = FACEBOOK.get('SESSION_KEY', 'dsnfb')
     SESSION_FIELDS = ','.join(FACEBOOK.get('SESSION_FIELDS', []))
+    SETUP_URL_NAME = FACEBOOK.get('SETUP_URL_NAME', None)
 
     if not APP_ID:
         raise ImproperlyConfigured(

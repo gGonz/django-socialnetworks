@@ -1,61 +1,32 @@
-from django.core.urlresolvers import reverse
-
-from socialnetworks.base.views import (
-    OAuthDialogRedirectView, OAuthCallbackView,
-    OAuthSetupView, OAuthDisconnectView
-)
-from socialnetworks.facebook.clients import FacebookClient
+from .clients import FacebookClient
+from .settings import SETUP_URL_NAME
+from ..core import views
 
 
-class FacebookDialogRedirect(OAuthDialogRedirectView):
-    client = FacebookClient()
-
-    def get_callback_url(self):
-        return self.client.get_domain() + reverse(
-            'socialnetworks:facebook:callback')
-
-    def get_redirect_url(self):
-        return self.client.encode_url(self.client.authorization_url, {
-            'client_id': self.client.app_key,
-            'redirect_uri': self.get_callback_url(),
-            'scope': self.client.scope,
-        })
+class FacebookDialogRedirect(views.OAuthDialogRedirectView):
+    """
+    View that handles the redirects for the Facebook authorization dialog.
+    """
+    client_class = FacebookClient
 
 
-class FacebookCallback(OAuthCallbackView):
-    client = FacebookClient()
-
-    def get_callback_url(self):
-        return self.client.get_domain() + reverse(
-            'socialnetworks:facebook:callback')
-
-    def get_redirect_url(self):
-        if self.session_get('new_user'):
-            return reverse('socialnetworks:facebook:setup')
-
-        else:
-            return self.session_pop('next') or '/'
+class FacebookCallback(views.OAuthCallbackView):
+    """
+    View that handles the Facebook OAuth callback.
+    """
+    client_class = FacebookClient
 
 
-class FacebookSetup(OAuthSetupView):
-    client = FacebookClient()
-
-    def get_redirect_url(self):
-        return self.session_pop('next') or '/'
-
-    def retrieve_user_data(self):
-        # Retrieves the proper profile.
-        profile = self.get_profile()
-
-        # Creates a client that can make signed requests.
-        fb = FacebookClient(profile)
-
-        # Defines the fields to retrieve.
-        fields = ','.join(['first_name', 'last_name', 'email', 'username'])
-
-        # Fetches the user's data from Facebook.
-        return fb.get('me', params={'fields': fields})
+class FacebookSetup(views.OAuthSetupView):
+    """
+    View that handles the setup of a retrieved Facebook account.
+    """
+    client_class = FacebookClient
+    setup_url = SETUP_URL_NAME
 
 
-class FacebookOAuthDisconnect(OAuthDisconnectView):
-    client = FacebookClient()
+class FacebookOAuthDisconnect(views.OAuthDisconnectView):
+    """
+    View that handles the disconnect of a Facebook account.
+    """
+    client_class = FacebookClient

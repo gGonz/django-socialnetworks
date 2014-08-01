@@ -4,7 +4,7 @@ from django import template
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from socialnetworks.base.defaults import (
+from ..core.defaults import (
     DEFAULT_ERROR_MESSAGE, DEFAULT_LOGIN_LABEL, DEFAULT_SIGNIN_LABEL)
 
 
@@ -30,7 +30,6 @@ def twitter_login(context, label=None, css_class=None, icon_class=None,
             message will be shown.
         - error_message: text to show as login error, if applicable.
         - error_class: css class to render the error message, if applicable.
-
     """
     replacements = {
         'service': 'Twitter'
@@ -75,7 +74,6 @@ def twitter_share(context, label=None, css_class=None, icon_class=None,
 
     Please visit https://dev.twitter.com/docs/tweet-button for a detailed
     reference of the arguments supported by Twitter.
-
     """
     # Base javascript for the button.
     base_script = (

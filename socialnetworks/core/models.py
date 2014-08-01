@@ -6,7 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 class BaseSocialProfile(models.Model):
     """
     Base model that stores the user's social network information.
-
     """
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -38,7 +37,6 @@ class BaseSocialProfile(models.Model):
 class BaseOAuth1Profile(BaseSocialProfile):
     """
     Base Model that stores OAuth 1.0 flow information.
-
     """
     oauth_request_token = models.CharField(
         blank=True, null=True,
@@ -68,7 +66,6 @@ class BaseOAuth1Profile(BaseSocialProfile):
 class BaseOAuth2Profile(BaseSocialProfile):
     """
     Base Model that stores OAuth 2.0 flow information.
-
     """
     oauth_access_token = models.CharField(
         blank=True, null=True,

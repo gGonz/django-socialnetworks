@@ -29,7 +29,7 @@ if [True for app in settings.INSTALLED_APPS if 'socialnetwork' in app]:
         # Imports and defines the setup form class.
         form_class = CONFIGURATION.get(
             'SETUP_FORM_CLASS',
-            'socialnetworks.base.forms.SocialUserCreationForm'
+            'socialnetworks.core.forms.SocialUserCreationForm'
         )
 
         module_ = '.'.join(form_class.split('.')[:-1])

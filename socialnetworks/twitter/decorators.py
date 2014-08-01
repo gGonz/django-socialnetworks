@@ -4,16 +4,14 @@ from django.core import signing
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
-from socialnetworks.twitter.clients import TwitterClient
-from socialnetworks.twitter.settings import (
-    COOKIE_MAX_AGE, SESSION_KEY, SESSION_FIELDS)
+from .clients import TwitterClient
+from .settings import COOKIE_MAX_AGE, SESSION_KEY, SESSION_FIELDS
 
 
 def fetch_twitter_data(function):
     """
     Decorator that extends a view to allow it to fetch the user's
     data from Twitter.
-
     """
     @wraps(function)
     def function_wrapper(request, *args, **kwargs):

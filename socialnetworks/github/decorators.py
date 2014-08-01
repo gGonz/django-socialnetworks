@@ -4,16 +4,14 @@ from django.core import signing
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
-from socialnetworks.github.clients import GitHubClient
-from socialnetworks.github.settings import (
-    COOKIE_MAX_AGE, SESSION_FIELDS, SESSION_KEY)
+from .clients import GitHubClient
+from .settings import COOKIE_MAX_AGE, SESSION_FIELDS, SESSION_KEY
 
 
 def fetch_github_data(function):
     """
     Decorator that extends a view to allow it to fetch the user's
     data from GitHub.
-
     """
     @wraps(function)
     def function_wrapper(request, *args, **kwargs):
