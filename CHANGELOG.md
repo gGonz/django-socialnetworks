@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.1 (2014-09-08)
+
+Features:
+
++ Added new ACTIVATE_ALREADY_REGISTERED_USERS option.
+
+Bugfixes:
+
++ Fixed ImportError in templatetags relative imports.
++ Changed signal invocation to send view classes as sender parameter instead of view instances.
+
+
 ## 0.3.0 (2014-07-31)
 
 Features:
@@ -13,6 +25,7 @@ Bugfixes:
 + Whole code clenaup and better PEP8 complaint.
 + Change all imports for relative imports.
 + Fixed the algorithm to link with an existing user or creating a new one.
+
 
 ## 0.2.0 (2014-07-07)
 
@@ -62,6 +75,7 @@ Bugfiex:
 Bugfixes:
 
 + Deprecated imports
+
 
 ## 0.0.4 (unreleased)
 

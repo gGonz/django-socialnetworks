@@ -22,9 +22,8 @@ Installation
 Usage
 -----
 
-#. | Add ``socialnetworks`` and the service's apps that you require to
-   your
-   |  ``INSTALLED_APPS``.
+#. Add ``socialnetworks`` and the service's apps that you require to
+   your ``INSTALLED_APPS``.
 
    .. code:: python
 
@@ -120,38 +119,38 @@ Available settings
 
 Global:
 
--  COOKIE\_MAX\_AGE: The max age of the cookies if you are storing
+-  ``COOKIE_MAX_AGE``: The max age of the cookies if you are storing
    social account data in cookies. Defaults to 900.
--  EMAIL\_IS\_USERNAME: Tell whether the email is used as username in
+-  ``EMAIL_IS_USERNAME``: Tell whether the email is used as username in
    the site. Defaults to True.
--  ACTIVATE\_ALREADY\_REGISTERED\_USERS: Tell wheter to activate already
-   registed but inactive users whose match a profile retrieved from the
-   service's API. This is useful if you implement registration by
-   sending an activation link and allow social login/registration at the
-   same time. Defaults to False.
--  SETUP\_TEMPLATE: The name of the template used to render the setup
+-  ``ACTIVATE_ALREADY_REGISTERED_USERS``: Tell wheter to activate
+   already registed but inactive users whose match a profile retrieved
+   from the service's API. This is useful if you implement registration
+   by sending an activation link and allow social login/registration at
+   the same time. Defaults to False.
+-  ``SETUP_TEMPLATE``: The name of the template used to render the setup
    view if needed.
--  SETUP\_FORM\_CLASS: The name of the form class to be used to complete
-   the setup process if needed.
+-  ``SETUP_FORM_CLASS``: The name of the form class to be used to
+   complete the setup process if needed.
 
 App specific:
 
--  APP\_ID: The id of your app given by the service.
--  APP\_SECRET: The secret key of your app given by the service.
--  APP\_ACCESS\_TOKEN: The access token of your app if required/given by
-   the service (Facebook).
--  SCOPE: A list of strings representing the scope of the tokens to be
-   generated, you must check the available scopesprovided by the service
-   you are using and it may require your app to be configured to request
-   these scopes. By default it tries to request the email in the way it
-   is provided specifically by each service.
--  SESSION\_KEY: The key to be used to store the relevant OAuth process
-   data in the user's session. Defaults to 'dsn' + the representative
-   letters of each service, ie, 'dsnfb', 'dsntw', etc.
--  SESSION\_FIELDS: The retrieved fields from the service's API that
+-  ``APP_ID``: The id of your app given by the service.
+-  ``APP_SECRET``: The secret key of your app given by the service.
+-  ``APP_ACCESS_TOKEN``: The access token of your app if required/given
+   by the service (Facebook).
+-  ``SCOPE``: A list of strings representing the scope of the tokens to
+   be generated, you must check the available scopesprovided by the
+   service you are using and it may require your app to be configured to
+   request these scopes. By default it tries to request the email in the
+   way it is provided specifically by each service.
+-  ``SESSION_KEY``: The key to be used to store the relevant OAuth
+   process data in the user's session. Defaults to 'dsn' + the
+   representative letters of each service, ie, 'dsnfb', 'dsntw', etc.
+-  ``SESSION_FIELDS``: The retrieved fields from the service's API that
    will be stored in the user's session if you are using cookies to
    store social account data.
--  SETUP\_URL\_NAME: A custom url name for redirect the users to
+-  ``SETUP_URL_NAME``: A custom url name for redirect the users to
    complete the account setup. This url name must be provided in the
    format 'namespace:url-name' since it will be resolved by using
    django.core.urlresolvers.reverse. This setting is useful if you want
@@ -164,8 +163,8 @@ Service specific:
 
 -  PayPal:
 
-   -  IS\_LIVE: Tell if your app is in live or sandbox mode to make the
-      requests to the proper API endpoints.
+   -  ``IS_LIVE``: Tell if your app is in live or sandbox mode to make
+      the requests to the proper API endpoints.
 
 Preload social account data in your views
 =========================================

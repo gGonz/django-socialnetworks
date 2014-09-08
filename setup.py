@@ -12,7 +12,7 @@ setup(
     description=('Extends Django with “log in” and “share” functionalities '
                  'for the most common social networks.'),
     long_description=open(
-        os.path.join(os.path.dirname(__file__), 'README.md')
+        os.path.join(os.path.dirname(__file__), 'README.rst')
     ).read(),
     author=__author__,
     author_email='zurg.cei@gmail.com',
