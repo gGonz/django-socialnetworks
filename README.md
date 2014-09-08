@@ -205,11 +205,11 @@ client = Facebook.client(user.facebookoauthprofile)
 # Retrieve data
 data = client.get('me', params={'fields': 'first_name', 'last_name'})
 print data
->>> {'first_name': 'John', 'las_name': 'Smith'}
+>>> {'first_name': 'John', 'last_name': 'Smith'}
 
 # Post data
 client.post('me', data={'first_name': 'Juan'})
 data = client.get('me', params={'fields': 'first_name', 'last_name'})
 print data
->>> {'first_name': 'Juan', 'las_name': 'Smith'}
+>>> {'first_name': 'Juan', 'last_name': 'Smith'}
 ```
