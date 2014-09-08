@@ -110,6 +110,7 @@ Global:
 
 + COOKIE_MAX_AGE: The max age of the cookies if you are storing social account data in cookies. Defaults to 900.
 + EMAIL_IS_USERNAME: Tell whether the email is used as username in the site. Defaults to True.
++ ACTIVATE_ALREADY_REGISTERED_USERS: Tell wheter to activate already registed but inactive users whose match a profile retrieved from the service's API. This is useful if you implement registration by sending an activation link and allow social login/registration at the same time. Defaults to False.
 + SETUP_TEMPLATE: The name of the template used to render the setup view if needed.
 + SETUP_FORM_CLASS: The name of the form class to be used to complete the setup process if needed.
 
