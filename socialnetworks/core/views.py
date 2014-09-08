@@ -295,7 +295,7 @@ class OAuthCallbackView(OAuthMixin, View):
 
                 # Tells to the site that the user has connected its profile.
                 connect.send(
-                    sender=self, user=self.request.user,
+                    sender=self.__class__, user=self.request.user,
                     service=self.client.service_name.lower()
                 )
 
@@ -325,7 +325,7 @@ class OAuthCallbackView(OAuthMixin, View):
 
             # Tells to the site that the user was logged in.
             login.send(
-                sender=self, user=self.request.user,
+                sender=self.__class__, user=self.request.user,
                 service=self.client.service_name.lower()
             )
 
@@ -449,7 +449,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
                 service = self.client.service_name.lower()
 
                 # Tells to the site that the user has linked its profile.
-                connect.send(sender=self, user=user, service=service)
+                connect.send(sender=self.__class__, user=user, service=service)
 
                 # If the user was retrieved from the database and it is not
                 # active and ```ACTIVATE_ALREADY_REGISTERED_USERS``` is True
@@ -461,13 +461,16 @@ class OAuthSetupView(OAuthMixin, TemplateView):
                     user.is_active = True
                     user.save()
 
-                    activation.send(sender=self, user=user, service=service)
+                    activation.send(
+                        sender=self.__class__, user=user,
+                        service=service
+                    )
 
                 # Authenticates the new user.
                 self.client.login(request, self.session_get('service_uid'))
 
                 # Tells to the site that the user was logged in.
-                login.send(sender=self, user=user, service=service)
+                login.send(sender=self.__class__, user=user, service=service)
 
                 # Redirects the user to the proper url.
                 return redirect(self.get_redirect_url())
@@ -529,7 +532,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
 
             # Tells to the site that the user has connected its profile.
             connect.send(
-                sender=self, user=user,
+                sender=self.__class__, user=user,
                 service=self.client.service_name.lower()
             )
 
@@ -538,7 +541,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
 
             # Tells to the site that the user was logged in.
             login.send(
-                sender=self, user=user,
+                sender=self.__class__, user=user,
                 service=self.client.service_name.lower()
             )
 
@@ -604,7 +607,7 @@ class OAuthDisconnectView(OAuthMixin, View):
 
             # Tells to the site that the profile was disconnected.
             disconnect.send(
-                sender=self, user=user,
+                sender=self.__class__, user=user,
                 service=self.client.service_name.lower()
             )
 
