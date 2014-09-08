@@ -25,6 +25,10 @@ if [True for app in settings.INSTALLED_APPS if 'socialnetwork' in app]:
             'SETUP_TEMPLATE',
             'setup_form.html'
         )
+        ACTIVATE_ALREADY_REGISTERED_USERS = CONFIGURATION.get(
+            'ACTIVATE_ALREADY_REGISTERED_USERS',
+            False
+        )
 
         # Imports and defines the setup form class.
         form_class = CONFIGURATION.get(

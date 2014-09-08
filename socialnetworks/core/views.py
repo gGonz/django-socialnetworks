@@ -14,9 +14,9 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View, TemplateView
 
-from .settings import EMAIL_IS_USERNAME, SETUP_FORM_CLASS, SETUP_TEMPLATE
+from . import settings
 from .utils import compose_username
-from ..signals import connect, disconnect, login
+from ..signals import activation, connect, disconnect, login
 
 
 class OAuthMixin(object):
@@ -213,7 +213,7 @@ class OAuthCallbackView(OAuthMixin, View):
             )
 
         # Verifies if the service's user id was provided in the credentials,
-        # if it is not provided the fetches is by debugging the access token.
+        # if it was not provided then fetches it by debugging the access token.
         access_token = credentials.get(self.client.access_token_label, None)
         service_uid = credentials.get(self.client.uid_label, None)
         token_expiration = credentials.get(self.client.expiration_label, None)
@@ -284,9 +284,10 @@ class OAuthCallbackView(OAuthMixin, View):
 
         profile.save()
 
-        # If the profile was created or has no user, tries to attach the
-        # profile to current user, if the user is not logged in redirects
-        # it to the final setup view to create a new one.
+        # If the profile was created or has no user then tries to attach the
+        # profile to current user, if the user is not logged in then redirects
+        # it to the final setup view to create a new user instance prefilled
+        # with the data retrieved from the service's API.
         if created or not profile.user:
             if request.user.is_authenticated():
                 profile.user = self.request.user
@@ -319,7 +320,7 @@ class OAuthCallbackView(OAuthMixin, View):
             ) % {'service': self.client.service_name}, extra_tags=tags)
 
         else:
-            # Logs the user in if it is not logged yet.
+            # Logs the user in if it is not logged in yet.
             self.client.login(request, self.session_get('service_uid'))
 
             # Tells to the site that the user was logged in.
@@ -350,7 +351,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
     Base View that handles the setup for the account after the access
     token is provided.
     """
-    template_name = SETUP_TEMPLATE
+    template_name = settings.SETUP_TEMPLATE
     setup_url = None
 
     def get_profile(self):
@@ -395,7 +396,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(OAuthSetupView, self).get_context_data(**kwargs)
         context['service'] = self.client.service_name
-        context['form'] = kwargs.get('form', SETUP_FORM_CLASS(kwargs))
+        context['form'] = kwargs.get('form', settings.SETUP_FORM_CLASS(kwargs))
 
         return context
 
@@ -417,17 +418,19 @@ class OAuthSetupView(OAuthMixin, TemplateView):
             user_data = self.retrieve_user_data()
             check = lambda k: k in user_data and user_data[k]
 
-            if EMAIL_IS_USERNAME and check('email'):
+            if settings.EMAIL_IS_USERNAME and check('email'):
                 user_data.update(username=user_data['email'])
 
             # Check if the retrieved data is enough to create a new user or
-            # fetch an existing one. If a existent user matches the data then
-            # links the OAuth profile to its account.
+            # fetch an existing user instance from the database.
+            # If a existent user matches the data then links the OAuth profile
+            # to its account.
             if check('email'):
                 filters = {'email__iexact': user_data['email']}
 
                 try:
                     user = UserModel.objects.get(**filters)
+                    created = False
 
                 except UserModel.DoesNotExist:
                     user = None
@@ -437,25 +440,37 @@ class OAuthSetupView(OAuthMixin, TemplateView):
 
                     if not UserModel.objects.filter(**filters):
                         user = self.create_new_user(user_data)
+                        created = True
 
-                if user is not None:
-                    # Attaches the user to the profile.
-                    profile.user = user
-                    profile.save()
+                # Attaches the user to the profile.
+                profile.user = user
+                profile.save()
 
-                    service = self.client.service_name.lower()
+                service = self.client.service_name.lower()
 
-                    # Tells to the site that the user has linked its profile.
-                    connect.send(sender=self, user=user, service=service)
+                # Tells to the site that the user has linked its profile.
+                connect.send(sender=self, user=user, service=service)
 
-                    # Authenticates the new user.
-                    self.client.login(request, self.session_get('service_uid'))
+                # If the user was retrieved from the database and it is not
+                # active and ```ACTIVATE_ALREADY_REGISTERED_USERS``` is True
+                # in settings then activates the user account and tell the
+                # site that the user was activated.
+                if (not created and not user.is_active and
+                        settings.ACTIVATE_ALREADY_REGISTERED_USERS):
 
-                    # Tells to the site that the user was logged in.
-                    login.send(sender=self, user=user, service=service)
+                    user.is_active = True
+                    user.save()
 
-                    # Redirects the user to the proper url.
-                    return redirect(self.get_redirect_url())
+                    activation.send(sender=self, user=user, service=service)
+
+                # Authenticates the new user.
+                self.client.login(request, self.session_get('service_uid'))
+
+                # Tells to the site that the user was logged in.
+                login.send(sender=self, user=user, service=service)
+
+                # Redirects the user to the proper url.
+                return redirect(self.get_redirect_url())
 
             # If no user was matched or created then redirect the user to the
             # final sertup view.
@@ -491,7 +506,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
 
         # Fetches the current OAuth profile.
         profile = self.get_profile()
-        form = SETUP_FORM_CLASS(request.POST)
+        form = settings.SETUP_FORM_CLASS(request.POST)
 
         if form.is_valid():
             # Composes the data for the user creation.
@@ -502,7 +517,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
             }
 
             # Sets the user's username.
-            if EMAIL_IS_USERNAME:
+            if settings.EMAIL_IS_USERNAME:
                 user_data.update({'username': user_data['email']})
             else:
                 user_data.update({'username': form.cleaned_data['username']})
