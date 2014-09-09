@@ -17,7 +17,7 @@ class FacebookClient(OAuth2Client):
     expiration_label = 'expires'
     authorization_url = 'https://www.facebook.com/dialog/oauth'
     access_token_url = 'https://graph.facebook.com/oauth/access_token'
-    token_debug_url = 'debug_token'
+    token_debug_url = 'https://graph.facebook.com/debug_token'
     service_api_url = 'https://graph.facebook.com/'
     session_key = 'socialnetworks:facebook'
 
@@ -63,16 +63,15 @@ class FacebookClient(OAuth2Client):
         if self.profile and not token:
             token = self.profile.oauth_access_token
 
-        r = self.get(
-            self.token_debug_url, params={'input_token': token},
-            auth_params={'access_token': self.get_app_access_token()}
-        )
+        params = {
+            'input_token': token,
+            'access_token': self.get_app_access_token()
+        }
 
-        if 'data' in r and r['data']['is_valid']:
-            return (True, r['data'])
+        r = self._get(self.token_debug_url, params=params)
+        data = r.json()
 
-        else:
-            return (False, None)
+        return (data['data']['is_valid'], data)
 
     def retrieve_user_data(self):
         """
