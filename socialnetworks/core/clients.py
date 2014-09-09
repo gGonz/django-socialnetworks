@@ -86,7 +86,7 @@ class BaseOAuthClient(object):
         Base method to perform POST requests by wrapping the
         'requests' python library.
         """
-        return requests.get(url, data=data, **kwargs)
+        return requests.post(url, data=data, **kwargs)
 
     def encode_url(self, url, params={}):
         """
