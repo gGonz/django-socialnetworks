@@ -191,7 +191,7 @@ class BaseOAuthClient(object):
         """
         raise NotImplementedError
 
-    def get(self, api_endpoint, params={}, auth_params=None):
+    def get(self, api_endpoint, params={}, auth_params=None, raw=False):
         """
         Makes a get request to the service's API and returns the response
         in json format.
@@ -215,9 +215,10 @@ class BaseOAuthClient(object):
             auth=self.compose_auth(auth_params)
         )
 
-        return response.json()
+        return raw and response or response.json()
 
-    def post(self, api_endpoint, data=None, params={}, auth_params=None):
+    def post(self,
+             api_endpoint, data=None, params={}, auth_params=None, raw=False):
         """
         Makes a post request to the service's API and returns the response
         in json format.
@@ -243,7 +244,7 @@ class BaseOAuthClient(object):
             auth=self.compose_auth(auth_params)
         )
 
-        return response.json()
+        return raw and response or response.json()
 
 
 class OAuth1Client(BaseOAuthClient):
