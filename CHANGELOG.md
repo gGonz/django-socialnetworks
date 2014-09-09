@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.2 (2014-09-09)
+
+Bugfixes:
+
++ Fixed bug that perfoms GET requests calling a client _post method.
+
+
 ## 0.3.1 (2014-09-08)
 
 Features:
