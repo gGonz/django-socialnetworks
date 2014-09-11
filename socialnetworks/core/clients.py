@@ -50,6 +50,9 @@ class BaseOAuthClient(object):
     # The label of the access token secret in the service.
     access_token_secret_label = None
 
+    # The label of the refresh token in the service if available.
+    refresh_token_label = None
+
     # The label of the user's id in the service.
     uid_label = None
 
@@ -179,6 +182,20 @@ class BaseOAuthClient(object):
         Connects with the service to check if the access token is valid and
         returns a tuple where the first element is a boolean indicating the
         validity and the second is the response from the service.
+
+        Subclasses must implement this method.
+        """
+        raise NotImplementedError
+
+    def refresh_access_token(self, profile=None, update=True):
+        """
+        Connects with the service to request a new access token for the
+        given profile.
+
+        Pass update=True to force the given profile to be updated with the
+        retrieved data.
+
+        Subclasses must implement this method.
         """
         raise NotImplementedError
 
@@ -298,6 +315,7 @@ class OAuth2Client(BaseOAuthClient):
     oauth_version = 2
     verifier_label = 'code'
     access_token_label = 'access_token'
+    refresh_token_label = 'refresh_token'
     uid_label = 'user_id'
 
     def compose_auth(self, auth_params={}):

@@ -167,10 +167,13 @@ class OAuthDialogRedirectView(OAuthMixin, View):
             credentials = self.client.get_request_token(
                 callback=self.get_callback_url())
 
+            request_token = credentials.get('oauth_token')
+            request_token_secret = credentials.get('oauth_token_secret')
+
             # Appends the response to the user session.
             self.session_put(**{
-                'request_token': credentials.get('oauth_token'),
-                'request_token_secret': credentials.get('oauth_token_secret')
+                'oauth_request_token': request_token,
+                'oauth_request_token_secret': request_token_secret
             })
 
         # Redirects the user to the authorization dialog.
@@ -182,7 +185,7 @@ class OAuthDialogRedirectView(OAuthMixin, View):
         autorization to its account details.
         """
         if self.client.oauth_version == 1:
-            param = self.session_get('request_token')
+            param = self.session_get('oauth_request_token')
 
         elif self.client.oauth_version == 2:
             param = self.get_callback_url()
@@ -199,13 +202,17 @@ class OAuthCallbackView(OAuthMixin, View):
         if self.client.verifier_label not in request.GET:
             return HttpResponseForbidden()
 
+        request_token = self.session_get('oauth_request_token'),
+        request_token_secret = self.session_get('oauth_request_token_secret')
+
         # Gets the OAuth access token.
         if self.client.oauth_version == 1:
             credentials = self.client.get_access_token(
-                request_token=self.session_get('request_token'),
-                request_token_secret=self.session_get('request_token_secret'),
+                request_token=request_token,
+                request_token_secret=request_token_secret,
                 verifier=request.GET[self.client.verifier_label]
             )
+
         elif self.client.oauth_version == 2:
             credentials = self.client.get_access_token(
                 verifier=request.GET[self.client.verifier_label],
@@ -214,35 +221,41 @@ class OAuthCallbackView(OAuthMixin, View):
 
         # Verifies if the service's user id was provided in the credentials,
         # if it was not provided then fetches it by debugging the access token.
-        access_token = credentials.get(self.client.access_token_label, None)
         service_uid = credentials.get(self.client.uid_label, None)
+        access_token = credentials.get(self.client.access_token_label, None)
+        refresh_token = credentials.get(self.client.refresh_token_label, None)
         token_expiration = credentials.get(self.client.expiration_label, None)
+        access_token_secret = credentials.get(
+            self.client.access_token_secret_label, None)
 
         # Calculates the token expiration date.
-        if token_expiration:
+        if token_expiration is not None:
             token_expiration = (
                 timezone.now() + timedelta(seconds=int(token_expiration)))
 
         # Debugs the token.
-        if not service_uid:
-            token_is_valid, debugged_data = self.client.debug_access_token(
+        if service_uid is None:
+            is_valid, debugged_data = self.client.debug_access_token(
                 access_token)
-            if token_is_valid:
+
+            if is_valid:
                 service_uid = debugged_data.get(self.client.uid_label)
 
         # Appends the response to the user session.
-        self.session_put(**{
-            'access_token': credentials.get(
-                self.client.access_token_label),
-            'access_token_secret': credentials.get(
-                self.client.access_token_secret_label),
-            'service_uid': service_uid
-        })
+        profile_data = {
+            'service_uid': service_uid,
+            'oauth_access_token': access_token,
+            'oauth_access_token_secret': access_token_secret,
+            'oauth_access_token_expires_at': token_expiration,
+            'oauth_request_token': request_token,
+            'oauth_request_token_secret': request_token_secret,
+            'oauth_refresh_token': refresh_token
+        }
+
+        self.session_put(**profile_data)
 
         # Gets the lookups to retrieve or create the profile.
-        lookup_kwargs = {
-            'service_uid': self.session_get('service_uid')
-        }
+        lookup_kwargs = {'service_uid': service_uid}
 
         # Tries to retrieve the profile.
         try:
@@ -269,19 +282,7 @@ class OAuthCallbackView(OAuthMixin, View):
 
         # Updates the profile to make sure that we have always the most
         # recent token.
-        profile.oauth_access_token = self.session_get('access_token')
-
-        if self.client.oauth_version == 1:
-            profile.oauth_request_token = self.session_get('request_token')
-            profile.oauth_request_token_secret = self.session_get(
-                'request_token_secret')
-            profile.oauth_access_token_secret = self.session_get(
-                'access_token_secret')
-
-        if self.client.oauth_version == 2:
-            profile.oauth_access_token_expires_at = (
-                token_expiration if token_expiration else None)
-
+        profile.__dict__.update(**profile_data)
         profile.save()
 
         # If the profile was created or has no user then tries to attach the
