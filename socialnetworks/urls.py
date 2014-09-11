@@ -29,6 +29,14 @@ if 'socialnetworks.linkedin' in settings.INSTALLED_APPS:
     )
 
 
+if 'socialnetworks.moves' in settings.INSTALLED_APPS:
+    urlpatterns = urlpatterns + patterns(
+        '',
+        url(r'^moves-app/',
+            include('socialnetworks.moves.urls', namespace='moves-app')),
+    )
+
+
 if 'socialnetworks.paypal' in settings.INSTALLED_APPS:
     urlpatterns = urlpatterns + patterns(
         '',

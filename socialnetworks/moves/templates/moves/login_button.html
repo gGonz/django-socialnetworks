@@ -1,0 +1,15 @@
+<form action="{{ action }}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{% if 'next' in request.GET %}{{ request.GET.next }}{% else %}{{ request.path }}{% endif %}"/>
+    <a class="{{ css_class }}" onclick="this.parentNode.submit()">
+        <i class="{{ icon_class }}"></i><span>{{ label }}</span>
+    </a>
+    {% if only_login %}
+    <input type="hidden" name="only_login" value="{{ request.get_full_path }}"/>
+    {% if 'oauth_error' in request.GET %}
+    <div class="{{ error_class }}">
+        {{ error_message }}
+    </div>
+    {% endif %}
+    {% endif %}
+</form>
