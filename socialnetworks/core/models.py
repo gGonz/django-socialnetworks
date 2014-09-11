@@ -18,6 +18,11 @@ class BaseSocialProfile(models.Model):
         blank=True, null=True,
         verbose_name=_('uid')
     )
+    oauth_access_token = models.CharField(
+        blank=True, null=True,
+        max_length=255,
+        verbose_name=_('OAuth access token')
+    )
 
     created_date = models.DateTimeField(
         blank=True, null=True,
@@ -38,6 +43,11 @@ class BaseOAuth1Profile(BaseSocialProfile):
     """
     Base Model that stores OAuth 1.0 flow information.
     """
+    oauth_access_token_secret = models.CharField(
+        blank=True, null=True,
+        max_length=255,
+        verbose_name=_('OAuth access token secret')
+    )
     oauth_request_token = models.CharField(
         blank=True, null=True,
         max_length=255,
@@ -48,16 +58,6 @@ class BaseOAuth1Profile(BaseSocialProfile):
         max_length=255,
         verbose_name=_('OAuth request token secret')
     )
-    oauth_access_token = models.CharField(
-        blank=True, null=True,
-        max_length=255,
-        verbose_name=_('OAuth access token')
-    )
-    oauth_access_token_secret = models.CharField(
-        blank=True, null=True,
-        max_length=255,
-        verbose_name=_('OAuth access token secret')
-    )
 
     class Meta:
         abstract = True
@@ -67,14 +67,14 @@ class BaseOAuth2Profile(BaseSocialProfile):
     """
     Base Model that stores OAuth 2.0 flow information.
     """
-    oauth_access_token = models.CharField(
-        blank=True, null=True,
-        max_length=255,
-        verbose_name=_('OAuth access token')
-    )
     oauth_access_token_expires_at = models.DateTimeField(
         blank=True, null=True,
         verbose_name=_('OAuth access token expires at')
+    )
+    oauth_refresh_token = models.CharField(
+        blank=True, null=True,
+        max_length=255,
+        verbose_name=_('OAuth refresh token')
     )
 
     class Meta:
