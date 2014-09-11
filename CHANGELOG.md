@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0 (2014-09-11)
+
+Features:
+
++ Added Moves app support https://dev.moves-app.com/
++ Added raw parameter to get and post client methods to return the raw requests response.
++ Added the posibility to handle refresh token requests (available in moves).
+
+Bugfixes:
+
++ Refactorized OAuth access token flow to allow refresh tokens to be saved.
+
 ## 0.3.2 (2014-09-09)
 
 Bugfixes:
