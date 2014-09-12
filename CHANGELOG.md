@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1 (2014-09-11)
+
+Bugfixex:
+
++ Fixed a bug that causes auth error with Facebook and Twitter.
+
+
 ## 0.4.0 (2014-09-11)
 
 Features:
@@ -11,6 +18,7 @@ Features:
 Bugfixes:
 
 + Refactorized OAuth access token flow to allow refresh tokens to be saved.
+
 
 ## 0.3.2 (2014-09-09)
 
