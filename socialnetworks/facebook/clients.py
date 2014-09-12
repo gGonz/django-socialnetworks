@@ -71,7 +71,7 @@ class FacebookClient(OAuth2Client):
         r = self._get(self.token_debug_url, params=params)
         data = r.json()
 
-        return (data['data']['is_valid'], data)
+        return (data['data']['is_valid'], data['data'])
 
     def retrieve_user_data(self):
         """

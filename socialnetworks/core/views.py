@@ -167,8 +167,9 @@ class OAuthDialogRedirectView(OAuthMixin, View):
             credentials = self.client.get_request_token(
                 callback=self.get_callback_url())
 
-            request_token = credentials.get('oauth_token')
-            request_token_secret = credentials.get('oauth_token_secret')
+            request_token = credentials.get(self.client.request_token_label)
+            request_token_secret = credentials.get(
+                self.client.request_token_secret_label)
 
             # Appends the response to the user session.
             self.session_put(**{
@@ -202,7 +203,7 @@ class OAuthCallbackView(OAuthMixin, View):
         if self.client.verifier_label not in request.GET:
             return HttpResponseForbidden()
 
-        request_token = self.session_get('oauth_request_token'),
+        request_token = self.session_get('oauth_request_token')
         request_token_secret = self.session_get('oauth_request_token_secret')
 
         # Gets the OAuth access token.
