@@ -1,8 +1,15 @@
 # Changelog
 
+## 0.4.2 (2014-09-15)
+
+Bugfixes:
+
++ Added shortcut imports in moves app.
+
+
 ## 0.4.1 (2014-09-11)
 
-Bugfixex:
+Bugfixes:
 
 + Fixed a bug that causes auth error with Facebook and Twitter.
 
