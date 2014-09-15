@@ -2,7 +2,7 @@ from .settings import SESSION_KEY
 from ..core.utils import read_social_data
 
 
-def read_facebook_data(request):
+def read_moves_app_data(request):
     """
     Returns the current user's Moves app data if it was previously fetched
     and stored in the user's session or cookies, otherwise returns None.
