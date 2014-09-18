@@ -232,7 +232,7 @@ class BaseOAuthClient(object):
             auth=self.compose_auth(auth_params)
         )
 
-        return raw and response or response.json()
+        return response if raw else response.json()
 
     def post(self,
              api_endpoint, data=None, params={}, auth_params=None, raw=False):
@@ -261,7 +261,7 @@ class BaseOAuthClient(object):
             auth=self.compose_auth(auth_params)
         )
 
-        return raw and response or response.json()
+        return response if raw else response.json()
 
 
 class OAuth1Client(BaseOAuthClient):
