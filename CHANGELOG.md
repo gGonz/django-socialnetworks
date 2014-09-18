@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.3 (2014-09-18)
+
+Bugfixes:
+
++ Fixed error in clients get en post methods that does not return a raw response if the request returns an http error code.
+
+
 ## 0.4.2 (2014-09-15)
 
 Bugfixes:
