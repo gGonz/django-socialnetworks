@@ -1,3 +1,6 @@
+import pytz
+
+from datetime import datetime
 from random import randint
 
 from django.contrib.auth import get_user_model
@@ -52,3 +55,20 @@ def compose_username(data):
             valid = True
 
     return username
+
+
+def to_timestamp(date_time):
+    """
+    Transform a Python datetime object to a UNIX UTC timestamp.
+    """
+    utc_dt = date_time.replace(tzinfo=pytz.UTC)
+    delta = utc_dt - datetime(1970, 1, 1, tzinfo=pytz.UTC)
+
+    return delta.total_seconds()
+
+
+def from_timestamp(timestamp):
+    """
+    Transform a UNIX UTC timestamp to a Python datetime object.
+    """
+    return datetime.fromtimestamp(timestamp, tz=pytz.UTC)

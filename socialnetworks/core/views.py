@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View, TemplateView
 
 from . import settings
-from .utils import compose_username
+from .utils import compose_username, from_timestamp, to_timestamp
 from ..signals import activation, connect, disconnect, login
 
 
@@ -247,7 +247,7 @@ class OAuthCallbackView(OAuthMixin, View):
             'service_uid': service_uid,
             'oauth_access_token': access_token,
             'oauth_access_token_secret': access_token_secret,
-            'oauth_access_token_expires_at': token_expiration,
+            'oauth_access_token_expires_at': to_timestamp(token_expiration),
             'oauth_request_token': request_token,
             'oauth_request_token_secret': request_token_secret,
             'oauth_refresh_token': refresh_token
@@ -280,6 +280,10 @@ class OAuthCallbackView(OAuthMixin, View):
             else:
                 profile = self.client.model.objects.create(**lookup_kwargs)
                 created = True
+
+        # Reconvert the token expiration to a Python datetime object.
+        profile_data.update(oauth_access_token_expires_at=from_timestamp(
+            profile_data['oauth_access_token_expires_at']))
 
         # Updates the profile to make sure that we have always the most
         # recent token.
@@ -436,6 +440,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
 
                 except UserModel.DoesNotExist:
                     user = None
+                    created = False
 
                 if user is None and check('username'):
                     filters = {'username__iexact': user_data['username']}
@@ -444,6 +449,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
                         user = self.create_new_user(user_data)
                         created = True
 
+            if user is not None:
                 # Attaches the user to the profile.
                 profile.user = user
                 profile.save()
