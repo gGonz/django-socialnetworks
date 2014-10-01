@@ -23,6 +23,7 @@ setup(
         'requests',
         'requests_oauthlib',
         'unidecode',
+        'pytz'
     ],
     packages=find_packages(),
     include_package_data=True,

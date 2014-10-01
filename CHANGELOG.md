@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.4 (2014-09-18)
+
+Bugfixes:
+
++ Fixed error in callback view that tries to serialize the token expiration datetime to JSON.
++ Fixed error in setup view returning None object as user when email are retrieved from the service API but without username.
+
+
 ## 0.4.3 (2014-09-18)
 
 Bugfixes:
