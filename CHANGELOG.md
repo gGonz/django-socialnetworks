@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.5 (2014-10-24)
+
+Bugfixes:
+
++ Changed to_timestamp and from_timestamp method to return None if the parameter passed is None to fix issues with OAut v1 services.
+
 ## 0.4.4 (2014-09-18)
 
 Bugfixes:
