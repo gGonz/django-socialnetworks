@@ -61,6 +61,9 @@ def to_timestamp(date_time):
     """
     Transform a Python datetime object to a UNIX UTC timestamp.
     """
+    if date_time is None:
+        return None
+
     utc_dt = date_time.replace(tzinfo=pytz.UTC)
     delta = utc_dt - datetime(1970, 1, 1, tzinfo=pytz.UTC)
 
@@ -71,4 +74,7 @@ def from_timestamp(timestamp):
     """
     Transform a UNIX UTC timestamp to a Python datetime object.
     """
+    if timestamp is None:
+        return None
+
     return datetime.fromtimestamp(timestamp, tz=pytz.UTC)
