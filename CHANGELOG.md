@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.6 (2014-11-14)
+
+Features:
+
++ Changed __init__ method of clients to accept a custom OAuth authentication dictionary.
++ Added the headers parameter to get and post methods of clients to pass custom headers to requests.
++ Changes the auth_params parameter of get and post methods of clients to auth that can receive a custom authenticaton that will be passed to requests.
+
 ## 0.4.5 (2014-10-24)
 
 Bugfixes:
