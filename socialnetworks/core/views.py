@@ -296,12 +296,12 @@ class OAuthCallbackView(OAuthMixin, View):
         # with the data retrieved from the service's API.
         if created or not profile.user:
             if request.user.is_authenticated():
-                profile.user = self.request.user
+                profile.user = request.user
                 profile.save()
 
                 # Tells to the site that the user has connected its profile.
                 connect.send(
-                    sender=self.__class__, user=self.request.user,
+                    sender=self.__class__, user=request.user,
                     service=self.client.service_name.lower()
                 )
 
@@ -315,8 +315,8 @@ class OAuthCallbackView(OAuthMixin, View):
             else:
                 self.session_put(**{'new_user': True})
 
-        elif (profile.user and profile.user != self.request.user and
-                self.request.user.is_authenticated()):
+        elif (profile.user and profile.user != request.user and
+                request.user.is_authenticated()):
 
             # Tells to the user that his connection was unsuccessful.
             tags = 'social %s' % self.client.service_name.lower()
@@ -326,12 +326,19 @@ class OAuthCallbackView(OAuthMixin, View):
             ) % {'service': self.client.service_name}, extra_tags=tags)
 
         else:
-            # Logs the user in if it is not logged in yet.
-            self.client.login(request, self.session_get('service_uid'))
+            if not request.user.is_authenticated():
+                # Logs the user in if it is not logged in yet.
+                self.client.login(request, self.session_get('service_uid'))
 
-            # Tells to the site that the user was logged in.
-            login.send(
-                sender=self.__class__, user=self.request.user,
+                # Tells to the site that the user was logged in.
+                login.send(
+                    sender=self.__class__, user=request.user,
+                    service=self.client.service_name.lower()
+                )
+
+            # Tells to the site that the user has connected its profile.
+            connect.send(
+                sender=self.__class__, user=request.user,
                 service=self.client.service_name.lower()
             )
 

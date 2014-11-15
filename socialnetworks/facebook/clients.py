@@ -60,8 +60,8 @@ class FacebookClient(OAuth2Client):
         that tells whether the token is valid or not and the second element is
         the data resulting of the token validation.
         """
-        if self.profile and not token:
-            token = self.profile.oauth_access_token
+        if token is None:
+            token = self._oauth_data['access_token']
 
         params = {
             'input_token': token,

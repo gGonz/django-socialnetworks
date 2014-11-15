@@ -36,13 +36,13 @@ class TwitterClient(OAuth1Client):
         that tells whether the token is valid or not and the second element is
         the data resulting of the token validation.
         """
-        if self.profile:
-            r = self.get(self.token_debug_url)
+        r = self.get(self.token_debug_url)
 
-            if 'errors' in r:
-                return (False, r)
-            else:
-                return (True, r)
+        if 'errors' in r:
+            return (False, r)
+
+        else:
+            return (True, r)
 
     def retrieve_user_data(self):
         """

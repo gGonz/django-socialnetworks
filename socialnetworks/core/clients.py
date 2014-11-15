@@ -6,6 +6,8 @@ from urlparse import parse_qsl
 
 from django.contrib.auth import authenticate, login
 
+from .models import BaseSocialProfile
+
 
 class BaseOAuthClient(object):
     """
@@ -74,8 +76,59 @@ class BaseOAuthClient(object):
     # The model where the profiles are stored.
     model = None
 
-    def __init__(self, profile=None):
-        self.profile = profile if profile else None
+    def __init__(self, profile=None, oauth_data=None):
+        """
+        Initialize a client instance storing the OAuth authentication data in
+        the '_oauth_data' dictionary.
+
+        Pass only one of 'profile' or 'oauth_parameters' to initialize the
+        client, if both are provided 'profile' takes precedence
+        over 'oauth_data'.
+
+        Note that if the instance is initialized with a valid instance of the
+        model defined in 'model' property it will be stored in the '_profile'
+        property, otherwise this property will be set to None.
+
+        If the instance is iniatilized passing a dict instance as the
+        'oauth_data' parameter it must be at least contain the 'access_token'
+        key that is required for OAuth v2 authentication. If the client
+        performs requests to an OAuth v1 service the 'oauth_data' must also
+        contain the 'token_secret' key othwewise the client will fail to
+        build the authentication parameters.
+        """
+        if profile is not None:
+            if isinstance(profile, BaseSocialProfile):
+                self._oauth_data = {
+                    'access_token': getattr(
+                        profile, 'oauth_access_token'),
+                    'token_secret': getattr(
+                        profile, 'oauth_access_token_secret', None),
+                    'refresh_token': getattr(
+                        profile, 'oauth_refresh_token', None),
+                    'expiration': getattr(
+                        profile, 'oauth_access_token_expires_at', None)
+                }
+
+                self._profile = profile
+
+            else:
+                raise ValueError(
+                    "'profile' parameter must be a '%s' model instance" %
+                    self.model.__name__
+                )
+
+        elif oauth_data:
+            if isinstance(oauth_data, dict):
+                self._oauth_data = {
+                    'access_token': oauth_data.get('access_token'),
+                    'token_secret': oauth_data.get('token_secret', None),
+                    'refresh_token': oauth_data.get('refresh_token', None),
+                    'expiration': oauth_data.get('expiration', None)
+                }
+
+            else:
+                raise ValueError(
+                    "'oauth_data' parameter must be a dict instance")
 
     def _get(self, url, **kwargs):
         """
@@ -125,22 +178,17 @@ class BaseOAuthClient(object):
         Returns a dictionary containing the proper parameters to compose
         the OAuth auth header.
         """
-        if self.profile:
-            if self.oauth_version == 1:
-                return {
-                    'resource_owner_key': self.profile.oauth_access_token,
-                    'resource_owner_secret': (
-                        self.profile.oauth_access_token_secret),
-                }
+        if self.oauth_version == 1:
+            return {
+                'resource_owner_key': self._oauth_data['access_token'],
+                'resource_owner_secret': self._oauth_data['token_secret']
+            }
 
-            elif self.oauth_version == 2:
-                return {
-                    'access_token': self.profile.oauth_access_token,
-                    'token_type': 'bearer'
-                }
-
-        else:
-            raise NameError('\'profile\' is not defined.')
+        elif self.oauth_version == 2:
+            return {
+                'access_token': self._oauth_data['access_token'],
+                'token_type': 'bearer'
+            }
 
     def compose_auth(self, auth_args={}):
         """
@@ -208,58 +256,72 @@ class BaseOAuthClient(object):
         """
         raise NotImplementedError
 
-    def get(self, api_endpoint, params={}, auth_params=None, raw=False):
+    def get(self, endpoint, params={}, headers={}, auth=None, raw=False):
         """
         Makes a get request to the service's API and returns the response
         in json format.
 
         Parameters:
-            - api_endpoint: a string that defines the endpoint where the
+            - endpoint: a string that defines the endpoint where the
                 request will be directed, this will be concatenated with
                 the base API url.
-            - params: a dictionary containing all the extra parameters that
-                will be passed to the API.
-            - auth_params: a dictionary containing all the extra parameters
-                needed to compose the OAuth auth header.
+
+            - params: a dictionary containing all the extra get parameters
+                (querystring) that will be passed to the service's API in
+                the request.
+
+            - headers: a dictionary containing all the extra headers that will
+                be passed to the service's API in the request.
+
+            - auth: a custom OAuth authentication object to replace the
+                calculated authentication.
+
+            - raw: a boolean that tells if the method should return the raw
+                requests module response when True or the parsed JSON
+                response data.
         """
-        if self.profile and not auth_params:
-            auth_params = self.get_auth_params()
+        url = self.service_api_url + endpoint
+        auth = (auth if auth is not None else
+                self.compose_auth(self.get_auth_params()))
 
-        url = self.service_api_url + api_endpoint
-
-        response = self._get(
-            url, params=params,
-            auth=self.compose_auth(auth_params)
-        )
+        response = self._get(url, params=params, headers=headers, auth=auth)
 
         return response if raw else response.json()
 
-    def post(self,
-             api_endpoint, data=None, params={}, auth_params=None, raw=False):
+    def post(self, endpoint, data=None, params={}, headers={},
+             auth=None, raw=False):
         """
         Makes a post request to the service's API and returns the response
         in json format.
 
         Parameters:
-            - api_endpoint: a string that defines the endpoint where the
+            - endpoint: a string that defines the endpoint where the
                 request will be directed, this will be concatenated with
                 the base API url.
+
             - data: the data that will be sent to the API in the POST body
                 of the request.
-            - params: a dictionary containing all the extra parameters that
-                will be passed to the API.
-            - auth_params: a dictionary containing all the extra parameters
-                needed to compose the OAuth auth header.
+
+            - params: a dictionary containing all the extra get parameters
+                (querystring) that will be passed to the service's API in
+                the request.
+
+            - headers: a dictionary containing all the extra headers that will
+                be passed to the service's API in the request.
+
+            - auth: a custom OAuth authentication object to replace the
+                calculated authentication.
+
+            - raw: a boolean that tells if the method should return the raw
+                requests module response when True or the parsed JSON
+                response data.
         """
-        if self.profile and not auth_params:
-            auth_params = self.get_auth_params()
+        url = self.service_api_url + endpoint
+        auth = (auth if auth is not None else
+                self.compose_auth(self.get_auth_params()))
 
-        url = self.service_api_url + api_endpoint
-
-        response = self._post(
-            url, data=data, params=params,
-            auth=self.compose_auth(auth_params)
-        )
+        response = self._post(url, data=data, params=params, headers=headers,
+                              auth=auth)
 
         return response if raw else response.json()
 
