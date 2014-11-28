@@ -456,39 +456,41 @@ class OAuthSetupView(OAuthMixin, TemplateView):
                         user = self.create_new_user(user_data)
                         created = True
 
-            if user is not None:
-                # Attaches the user to the profile.
-                profile.user = user
-                profile.save()
+                if user is not None:
+                    # Attaches the user to the profile.
+                    profile.user = user
+                    profile.save()
 
-                service = self.client.service_name.lower()
+                    service = self.client.service_name.lower()
 
-                # Tells to the site that the user has linked its profile.
-                connect.send(sender=self.__class__, user=user, service=service)
+                    # Tells to the site that the user has linked its profile.
+                    connect.send(sender=self.__class__, user=user,
+                                 service=service)
 
-                # If the user was retrieved from the database and it is not
-                # active and ```ACTIVATE_ALREADY_REGISTERED_USERS``` is True
-                # in settings then activates the user account and tell the
-                # site that the user was activated.
-                if (not created and not user.is_active and
-                        settings.ACTIVATE_ALREADY_REGISTERED_USERS):
+                    # If the user was retrieved from the database and it is
+                    # not active and ```ACTIVATE_ALREADY_REGISTERED_USERS```
+                    # is True in settings then activates the user account and
+                    # tell the site that the user was activated.
+                    if (not created and not user.is_active and
+                            settings.ACTIVATE_ALREADY_REGISTERED_USERS):
 
-                    user.is_active = True
-                    user.save()
+                        user.is_active = True
+                        user.save()
 
-                    activation.send(
-                        sender=self.__class__, user=user,
-                        service=service
-                    )
+                        activation.send(
+                            sender=self.__class__, user=user,
+                            service=service
+                        )
 
-                # Authenticates the new user.
-                self.client.login(request, self.session_get('service_uid'))
+                    # Authenticates the new user.
+                    self.client.login(request, self.session_get('service_uid'))
 
-                # Tells to the site that the user was logged in.
-                login.send(sender=self.__class__, user=user, service=service)
+                    # Tells to the site that the user was logged in.
+                    login.send(sender=self.__class__, user=user,
+                               service=service)
 
-                # Redirects the user to the proper url.
-                return redirect(self.get_redirect_url())
+                    # Redirects the user to the proper url.
+                    return redirect(self.get_redirect_url())
 
             # If no user was matched or created then redirect the user to the
             # final sertup view.
