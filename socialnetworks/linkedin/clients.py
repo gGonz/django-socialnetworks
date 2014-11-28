@@ -44,8 +44,8 @@ class LinkedInClient(OAuth2Client):
         """
         # Pass the access token as a parameter for the LinkedIn OAuth2
         # service and tell to return the response in json format.
-        if self.profile and not token:
-            token = self.profile.oauth_access_token
+        if token is None:
+            token = self._oauth_data.get('access_token', None)
 
         return {'format': 'json', 'oauth2_access_token': token}
 
