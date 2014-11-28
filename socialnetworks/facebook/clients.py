@@ -15,10 +15,10 @@ class FacebookClient(OAuth2Client):
     model = FacebookOAuthProfile
 
     expiration_label = 'expires'
-    authorization_url = 'https://www.facebook.com/dialog/oauth'
-    access_token_url = 'https://graph.facebook.com/oauth/access_token'
-    token_debug_url = 'https://graph.facebook.com/debug_token'
-    service_api_url = 'https://graph.facebook.com/'
+    authorization_url = 'https://www.facebook.com/v2.2/dialog/oauth'
+    access_token_url = 'https://graph.facebook.com/v2.2/oauth/access_token'
+    token_debug_url = 'https://graph.facebook.com/v2.2/debug_token'
+    service_api_url = 'https://graph.facebook.com/v2.2/'
     session_key = 'socialnetworks:facebook'
 
     def compose_authorization_url(self, callback_url):
