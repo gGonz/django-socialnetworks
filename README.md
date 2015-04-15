@@ -9,7 +9,11 @@ This package is built on top of the [Python Requests library](http://docs.python
 ## Installation
 
 ```bash
-pip install django-socialnetworks
+# Default installation
+$ pip install django-socialnetworks
+
+# Install security egg
+$ pip install django-socialnetworks[security]
 ```
 
 ## Usage

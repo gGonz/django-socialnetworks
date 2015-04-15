@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.8 (2015-04-15)
+Features:
+
++ Added new 'security' extra egg that installs requests[security] as dependency
+
 ## 0.4.7 (2014-11-28)
 
 Features:

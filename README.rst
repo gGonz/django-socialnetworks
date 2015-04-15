@@ -17,7 +17,11 @@ Installation
 
 .. code:: bash
 
-    pip install django-socialnetworks
+    # Default installation
+    $ pip install django-socialnetworks
+
+    # Install security egg
+    $ pip install django-socialnetworks[security]
 
 Usage
 -----
@@ -262,4 +266,3 @@ but POST must have some caveats depending on the service.**\ \*
     data = client.get('me', params={'fields': 'first_name', 'last_name'})
     print data
     >>> {'first_name': 'Juan', 'last_name': 'Smith'}
-
