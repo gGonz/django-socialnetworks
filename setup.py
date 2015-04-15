@@ -19,12 +19,14 @@ setup(
     url='https://github.com/gGonz/django-socialnetworks',
     license='Apache License (2.0)',
     install_requires=[
-        'Django >= 1.5',
-        'requests',
+        'Django>=1.5',
         'requests_oauthlib',
         'unidecode',
         'pytz'
     ],
+    extras_require={
+        'security': 'requests[security]'
+    },
     packages=find_packages(),
     include_package_data=True,
     classifiers = [
