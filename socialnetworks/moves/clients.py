@@ -70,11 +70,11 @@ class MovesAppClient(OAuth2Client):
         Pass update=True to force the profile instance to be updated with the
         retrieved data.
         """
-        assert isinstance(self.profile, self.model)
+        assert isinstance(self._profile, self.model)
 
         params = {
             'grant_type': 'refresh_token',
-            'refresh_token': self.profile.oauth_refresh_token,
+            'refresh_token': self._profile.oauth_refresh_token,
             'client_id': self.app_key,
             'client_secret': self.app_secret
         }
@@ -92,7 +92,7 @@ class MovesAppClient(OAuth2Client):
                     seconds=int(response_data.get(self.expiration_label)))
             }
 
-            self.profile.__dict__.update(**profile_data)
-            self.profile.save()
+            self._profile.__dict__.update(**profile_data)
+            self._profile.save()
 
         return (response.status_code == 200, response.json())
