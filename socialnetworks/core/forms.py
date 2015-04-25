@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
@@ -17,13 +18,13 @@ class SocialUserCreationForm(forms.ModelForm):
                     '@/./+/-/_ only.'),
         error_messages={'invalid': _('This value may contain only letters, '
                         'numbers and @/./+/-/_ characters.')},
-        label=_('username').capitalize()
+        label=_('username')
     )
 
     email = forms.EmailField(
         required=EMAIL_IS_USERNAME,
         max_length=75,
-        label=_('email').capitalize()
+        label=_('email')
     )
 
     class Meta:

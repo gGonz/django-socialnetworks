@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .models import MovesAppOAuthProfile
 from ..core.backends import BaseSocialBackend
 

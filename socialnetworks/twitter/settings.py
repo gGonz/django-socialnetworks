@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from django.core.exceptions import ImproperlyConfigured
 
-from ..core.settings import CONFIGURATION, COOKIE_MAX_AGE
+from ..core.settings import CONFIGURATION
+from ..core.settings import COOKIE_MAX_AGE  # noqa
 
 
 # Tries to get the Twitter configuration, if the configuration is not

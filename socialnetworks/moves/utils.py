@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .settings import SESSION_KEY
 from ..core.utils import read_social_data
 

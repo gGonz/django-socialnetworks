@@ -1,4 +1,4 @@
-from django.db import models
+# -*- coding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 
 from ..core.models import BaseOAuth2Profile

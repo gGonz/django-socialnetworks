@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .clients import MovesAppClient
 from .settings import SETUP_URL_NAME
 from ..core import views

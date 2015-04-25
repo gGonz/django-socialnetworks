@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from . import settings
 from .models import FacebookOAuthProfile
 from ..core.clients import OAuth2Client

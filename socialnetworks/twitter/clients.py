@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from . import settings
 from .models import TwitterOAuthProfile
 from ..core.clients import OAuth1Client

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from functools import wraps
 
 from django.core import signing
@@ -5,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 from .clients import MovesAppClient
-from .settings import COOKIE_MAX_AGE, SESSION_FIELDS, SESSION_KEY
+from .settings import COOKIE_MAX_AGE, SESSION_KEY
 
 
 def fetch_moves_app_data(function):
