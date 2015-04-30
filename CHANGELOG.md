@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.10 (2015-04-30)
+
+Bugfixes:
+
++ Fixed bug not updating OAuth data in `MovesAppClient` instance after refreshing an access token.
+
+
 ## 0.4.9 (2015-04-24)
 
 Bugfixes:
@@ -11,7 +18,7 @@ Bugfixes:
 
 Features:
 
-+ Added new 'security' extra egg that installs requests[security] as dependency
++ Added new 'security' extra egg that installs requests[security] as dependency.
 
 
 ## 0.4.7 (2014-11-28)
