@@ -1,8 +1,12 @@
-*.*~
-*.pyc
+*.~
 *.egg-info/
 *.project
+*.pyc
 *.pydevproject
+*.swp
+.coverage
+.ropeproject/
 .settings/
+.tox
 dist/
 MANIFEST
