@@ -83,16 +83,15 @@ class MovesAppClient(OAuth2Client):
         response_data = response.json()
 
         if update and response.status_code == 200:
-            profile_data = {
-                'oauth_access_token': response_data.get(
-                    self.access_token_label),
-                'oauth_refresh_token': response_data.get(
-                    self.refresh_token_label),
-                'oauth_token_expires_at': now() + timedelta(
-                    seconds=int(response_data.get(self.expiration_label)))
-            }
+            self._profile.oauth_access_token = response_data.get(
+                self.access_token_label)
 
-            self._profile.__dict__.update(**profile_data)
+            self._profile.oauth_refresh_token = response_data.get(
+                self.refresh_token_label)
+
+            self._profile.oauth_token_expires_at = now() + timedelta(
+                seconds=int(response_data.get(self.expiration_label)))
+
             self._profile.save()
 
         return (response.status_code == 200, response.json())
