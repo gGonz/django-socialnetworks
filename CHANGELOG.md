@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.11 (2015-06-18)
+
+Bugfixes:
+
++ Fix django.core.exceptions.AppRegistryNotReady exception in Django >= 1.7
+
+
 ## 0.4.10 (2015-04-30)
 
 Bugfixes:
