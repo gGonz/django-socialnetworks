@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.11 (2015-06-25)
+
+Bugfixes:
+
++ Added empty models file to allow submodules to be discoverables by Django >= 1.7
+
+
 ## 0.4.11 (2015-06-18)
 
 Bugfixes:
