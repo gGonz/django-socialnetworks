@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0 (unreleased)
+
+Features:
+
++ Added migrations for both South and Django >= 1.7
++ Deprecated fecth_{service}_data decorators in favor of new retrieve_{service}_profile functions
+
+Bugfixes:
+
++ Fixed LinkedInClient to work with the latest API
+
+
 ## 0.4.11 (2015-06-25)
 
 Bugfixes:
