@@ -38,34 +38,28 @@ class LinkedInClient(OAuth2Client):
 
         return self.encode_url(self.authorization_url, params)
 
-    def get_auth_params(self, token=None):
-        """
-        Compose the authentication params to connect to the LinkedIn API.
-        """
-        # Pass the access token as a parameter for the LinkedIn OAuth2
-        # service and tell to return the response in json format.
-        if token is None:
-            token = self._oauth_data.get('access_token', None)
-
-        return {'format': 'json', 'oauth2_access_token': token}
-
-    def get(self, api_endpoint, params={}, token=None):
+    def get(self, endpoint, params={}, headers={}, auth=None, raw=False):
         """
         Method to perform GET requests to the LinkedIn API.
         """
-        params.update(self.get_auth_params(token))
-        url = self.service_api_url + api_endpoint
+        params.update(format='json')
+        return super(LinkedInClient, self).get(
+            endpoint, params=params, headers=headers, auth=auth, raw=raw)
 
-        return self._get(url, params=params).json()
-
-    def post(self, api_endpoint, data=None, params={}, token=None):
+    def post(self, endpoint, data=None, params={}, headers={},
+             auth=None, raw=False):
         """
         Method to perform POST requests to the LinkedIn API.
         """
-        params.update(self.get_auth_params(token))
-        url = self.service_api_url + api_endpoint
-
-        return self._post(url, data=data, params=params).json()
+        params.update(format='json')
+        return super(LinkedInClient, self).post(
+            endpoint,
+            data=data,
+            params=params,
+            headers=headers,
+            auth=auth,
+            raw=raw
+        )
 
     def debug_access_token(self, token=None):
         """
@@ -78,7 +72,8 @@ class LinkedInClient(OAuth2Client):
         if token is None:
             token = self._oauth_data['access_token']
 
-        r = self.get(self.token_debug_url, token=token)
+        auth = self.compose_auth({'access_token': token})
+        r = self.get(self.token_debug_url, auth=auth)
 
         return (False if 'errorCode' in r else True, r)
 
