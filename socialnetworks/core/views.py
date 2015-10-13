@@ -299,19 +299,6 @@ class OAuthCallbackView(OAuthMixin, View):
                 profile.user = request.user
                 profile.save()
 
-                # Tells to the site that the user has connected its profile.
-                connect.send(
-                    sender=self.__class__, user=request.user,
-                    service=self.client.service_name.lower()
-                )
-
-                # Tells to the user that his connection was successful.
-                tags = 'social %s' % self.client.service_name.lower()
-                messages.success(request, _(
-                    'Your %(service)s profile was successfully connected '
-                    'with your user account.'
-                ) % {'service': self.client.service_name}, extra_tags=tags)
-
             else:
                 self.session_put(**{'new_user': True})
 
@@ -325,6 +312,8 @@ class OAuthCallbackView(OAuthMixin, View):
                 'user account.'
             ) % {'service': self.client.service_name}, extra_tags=tags)
 
+            return redirect(self.get_redirect_url())
+
         else:
             if not request.user.is_authenticated():
                 # Logs the user in if it is not logged in yet.
@@ -336,11 +325,19 @@ class OAuthCallbackView(OAuthMixin, View):
                     service=self.client.service_name.lower()
                 )
 
-            # Tells to the site that the user has connected its profile.
-            connect.send(
-                sender=self.__class__, user=request.user,
-                service=self.client.service_name.lower()
-            )
+        # Tell to the site that the user has connected its profile.
+        connect.send(
+            sender=self.__class__, user=request.user,
+            service=self.client.service_name.lower()
+        )
+
+        # Tell to the user that his connection was successful.
+        tags = 'social %s' % self.client.service_name.lower()
+        messages.success(request, _(
+            'Your %(service)s profile was successfully connected '
+            'with your user account.'
+        ) % {'service': self.client.service_name}, extra_tags=tags)
+        print 'CONECTADO'
 
         return redirect(self.get_redirect_url())
 

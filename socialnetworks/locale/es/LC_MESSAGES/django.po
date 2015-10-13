@@ -1,18 +1,18 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Spanish translations for the django-socialnetworks package.
+# Copyright (C) 2013
+# This file is distributed under the same license as the django-socialnetworks package.
+# Gabriel González <zurg.cei@gmail.com>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 0.5.0a3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:32-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2015-10-13 16:45-0500\n"
+"PO-Revision-Date: 2015-10-13 16:45-0500\n"
+"Last-Translator: Gabriel González <zurg.cei@gmail.com>\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,7 +24,7 @@ msgid "Log in with %(service)s"
 msgstr "Inicia sesión con %(service)s"
 
 #: core/defaults.py:8
-#, fuzzy, python-format
+#, python-format
 msgid "Sign in with %(service)s"
 msgstr "Regístrate con %(service)s"
 
@@ -39,30 +39,30 @@ msgstr ""
 "Necesitas conectar tu cuenta de %(service)s antes de poder iniciar sesión "
 "con esas credenciales."
 
-#: core/forms.py:16
+#: core/forms.py:17
 msgid "Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."
 msgstr ""
 "Obligatorio. Máximo 30 caracteres. Letras, dígitos y (@/./+/-/_) solamente."
 
-#: core/forms.py:18
+#: core/forms.py:19
 msgid "This value may contain only letters, numbers and @/./+/-/_ characters."
 msgstr "Este valor solo puede contener letras, dígitos y (@/./+/-/_)."
 
-#: core/forms.py:20
+#: core/forms.py:21
 msgid "username"
 msgstr "nombre de usuario"
 
-#: core/forms.py:26
+#: core/forms.py:27
 msgid "email"
 msgstr "correo electrónico"
 
-#: core/forms.py:54
+#: core/forms.py:55
 msgid "This username is already in use, please provide a different username."
 msgstr ""
 "Este nombre de usuario ya está siendo usado por alguien más, por favor "
 "proporciona un numbre de usuario diferente."
 
-#: core/forms.py:73
+#: core/forms.py:74
 msgid ""
 "This email address is already in use, please provide a different email "
 "address."
@@ -78,41 +78,39 @@ msgstr "usuario"
 msgid "uid"
 msgstr "uid"
 
-#: core/models.py:25
-msgid "created date"
-msgstr "fecha de creación"
-
-#: core/models.py:30
-msgid "last modified"
-msgstr "última modificación"
-
-#: core/models.py:44
-msgid "OAuth request token"
-msgstr "token de solicitud de OAuth"
-
-#: core/models.py:49
-msgid "OAuth request token secret"
-msgstr "secreto del token de solicitud de OAuth"
-
-#: core/models.py:54 core/models.py:73
+#: core/models.py:24
 msgid "OAuth access token"
 msgstr "token de acceso de OAuth"
 
-#: core/models.py:59
+#: core/models.py:30
+msgid "created date"
+msgstr "fecha de creación"
+
+#: core/models.py:35
+msgid "last modified"
+msgstr "última modificación"
+
+#: core/models.py:49
 msgid "OAuth access token secret"
 msgstr "secreto del token de acceso de OAuth"
 
-#: core/models.py:77
+#: core/models.py:54
+msgid "OAuth request token"
+msgstr "token de solicitud de OAuth"
+
+#: core/models.py:59
+msgid "OAuth request token secret"
+msgstr "secreto del token de solicitud de OAuth"
+
+#: core/models.py:72
 msgid "OAuth access token expires at"
 msgstr "expiración del token de acceso de OAuth"
 
-#: core/views.py:304
-#, python-format
-msgid ""
-"Your %(service)s profile was successfully connected with your user account."
-msgstr "Tu perfil de %(service)s ha sido conectado a tu cuenta de usuario."
+#: core/models.py:77
+msgid "OAuth refresh token"
+msgstr "token de solicitud de OAuth"
 
-#: core/views.py:317
+#: core/views.py:311
 #, python-format
 msgid ""
 "This %(service)s profile is already connected with another user account."
@@ -120,7 +118,13 @@ msgstr ""
 "Este perfil de %(service)s ya se encuentra conectado con otra cuenta de "
 "usuario."
 
-#: core/views.py:599
+#: core/views.py:337
+#, python-format
+msgid ""
+"Your %(service)s profile was successfully connected with your user account."
+msgstr "Tu perfil de %(service)s ha sido conectado a tu cuenta de usuario."
+
+#: core/views.py:631
 #, python-format
 msgid ""
 "Your %(service)s profile was successfully disconnected from your user "
@@ -138,6 +142,7 @@ msgstr "perfiles de Facebook"
 #: facebook/templates/facebook/setup_form.html:24
 #: github/templates/github/setup_form.html:24
 #: linkedin/templates/linkedin/setup_form.html:24
+#: moves/templates/moves/setup_form.html:24
 #: paypal/templates/paypal/setup_form.html:24
 #: twitter/templates/twitter/setup_form.html:24
 msgid "It seems that there are errors on the form"
@@ -146,6 +151,7 @@ msgstr "Parece que hay errores en los datos del formulario"
 #: facebook/templates/facebook/setup_form.html:49
 #: github/templates/github/setup_form.html:49
 #: linkedin/templates/linkedin/setup_form.html:49
+#: moves/templates/moves/setup_form.html:49
 #: paypal/templates/paypal/setup_form.html:49
 #: twitter/templates/twitter/setup_form.html:49
 msgid "Submit"
@@ -155,33 +161,45 @@ msgstr "Enviar"
 msgid "Share"
 msgstr "Compartir"
 
+#: facebook/utils.py:15 linkedin/utils.py:15 moves/utils.py:14
+#: twitter/utils.py:14
+#, python-brace-format
+msgid ""
+"Your access token for {service} is invalid. Please connect your account with "
+"your profile again."
+msgstr ""
+"Tu token de acceso de {service} es inválido. Por favor conecta la cuenta con "
+"tu perfil de usuario otra vez."
+
 #: github/models.py:11
-#, fuzzy
 msgid "github profile"
 msgstr "perfil de GitHub"
 
 #: github/models.py:12
-#, fuzzy
 msgid "github profiles"
 msgstr "perfiles de GitHub"
 
 #: linkedin/models.py:11
-#, fuzzy
 msgid "LinkedIn profile"
 msgstr "perfil de LinkedIn"
 
 #: linkedin/models.py:12
-#, fuzzy
 msgid "LinkedIn profiles"
 msgstr "perfiles de LinkedIn"
 
+#: moves/models.py:12
+msgid "moves app profile"
+msgstr "perfil de Moves app"
+
+#: moves/models.py:13
+msgid "moves app profiles"
+msgstr "perfiles de Moves app"
+
 #: paypal/models.py:11
-#, fuzzy
 msgid "paypal profile"
 msgstr "perfil de PayPal"
 
 #: paypal/models.py:12
-#, fuzzy
 msgid "paypal profiles"
 msgstr "perfiles de PayPal"
 
@@ -196,6 +214,3 @@ msgstr "perfiles de Twitter"
 #: twitter/templatetags/twitter.py:95
 msgid "Tweet"
 msgstr "Twittear"
-
-#~ msgid "Sign in with Facebook"
-#~ msgstr "Regístrate con Facebook"
