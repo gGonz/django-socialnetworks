@@ -325,19 +325,19 @@ class OAuthCallbackView(OAuthMixin, View):
                     service=self.client.service_name.lower()
                 )
 
-        # Tell to the site that the user has connected its profile.
-        connect.send(
-            sender=self.__class__, user=request.user,
-            service=self.client.service_name.lower()
-        )
+        if profile.user:
+            # Tell to the site that the user has connected its profile.
+            connect.send(
+                sender=self.__class__, user=request.user,
+                service=self.client.service_name.lower()
+            )
 
-        # Tell to the user that his connection was successful.
-        tags = 'social %s' % self.client.service_name.lower()
-        messages.success(request, _(
-            'Your %(service)s profile was successfully connected '
-            'with your user account.'
-        ) % {'service': self.client.service_name}, extra_tags=tags)
-        print 'CONECTADO'
+            # Tell to the user that his connection was successful.
+            tags = 'social %s' % self.client.service_name.lower()
+            messages.success(request, _(
+                'Your %(service)s profile was successfully connected '
+                'with your user account.'
+            ) % {'service': self.client.service_name}, extra_tags=tags)
 
         return redirect(self.get_redirect_url())
 
