@@ -4,6 +4,9 @@
     <a class="{{ css_class }}" onclick="this.parentNode.submit()">
         <i class="{{ icon_class }}"></i><span>{{ label }}</span>
     </a>
+    {% if is_reconnecting %}
+        <input type="hidden" value="is_reconnecting" name="is_reconnecting"/>
+    {% endif %}
     {% if only_login %}
     <input type="hidden" name="only_login" value="{{ request.get_full_path }}"/>
     {% if 'oauth_error' in request.GET %}

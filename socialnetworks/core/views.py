@@ -162,6 +162,9 @@ class OAuthDialogRedirectView(OAuthMixin, View):
         if 'only_login' in request.POST:
             self.session_put(**{'only_login': request.POST['only_login']})
 
+        if 'is_reconnecting' in request.POST:
+            request.session['is_reconnecting'] = True
+
         if self.client.oauth_version == 1:
             # Gets the OAuth request token.
             credentials = self.client.get_request_token(
@@ -294,13 +297,30 @@ class OAuthCallbackView(OAuthMixin, View):
         # profile to current user, if the user is not logged in then redirects
         # it to the final setup view to create a new user instance prefilled
         # with the data retrieved from the service's API.
-        if created or not profile.user:
+        if (
+            created or
+            not profile.user or
+            request.session.get('is_reconnecting', None)
+        ):
             if request.user.is_authenticated():
                 profile.user = request.user
                 profile.save()
 
+                # Tell to the site that the user has connected its profile.
+                connect.send(
+                    sender=self.__class__, user=request.user,
+                    service=self.client.service_name.lower()
+                )
+
             else:
                 self.session_put(**{'new_user': True})
+
+            # Tell to the user that his connection was successful.
+            tags = 'social %s' % self.client.service_name.lower()
+            messages.success(request, _(
+                'Your %(service)s profile was successfully connected '
+                'with your user account.'
+            ) % {'service': self.client.service_name}, extra_tags=tags)
 
         elif (profile.user and profile.user != request.user and
                 request.user.is_authenticated()):
@@ -324,20 +344,6 @@ class OAuthCallbackView(OAuthMixin, View):
                     sender=self.__class__, user=request.user,
                     service=self.client.service_name.lower()
                 )
-
-        if profile.user:
-            # Tell to the site that the user has connected its profile.
-            connect.send(
-                sender=self.__class__, user=request.user,
-                service=self.client.service_name.lower()
-            )
-
-            # Tell to the user that his connection was successful.
-            tags = 'social %s' % self.client.service_name.lower()
-            messages.success(request, _(
-                'Your %(service)s profile was successfully connected '
-                'with your user account.'
-            ) % {'service': self.client.service_name}, extra_tags=tags)
 
         return redirect(self.get_redirect_url())
 
