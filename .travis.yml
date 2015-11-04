@@ -1,0 +1,17 @@
+language: python
+
+env:
+    - TOX_ENV=py27-flake8
+    - TOX_ENV=py27-django15
+    - TOX_ENV=py27-django16
+    - TOX_ENV=py27-django17
+    - TOX_ENV=py27-django18
+
+install:
+    - pip install tox
+
+script:
+    - tox -e $TOX_ENV
+
+after_success:
+    - tox -e py27-django17 -- --cov=socialnetworks
