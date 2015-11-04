@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
 from django import template
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from ..settings import APP_ID
-from ...core.defaults import (
-    DEFAULT_ERROR_MESSAGE, DEFAULT_LOGIN_LABEL, DEFAULT_SIGNIN_LABEL)
+from socialnetworks.facebook.settings import APP_ID
+from socialnetworks.core.defaults import (
+    DEFAULT_ERROR_MESSAGE,
+    DEFAULT_LOGIN_LABEL,
+    DEFAULT_SIGNIN_LABEL
+)
 
 
 register = template.Library()
@@ -16,10 +20,10 @@ def facebook_login(
     label=None,
     css_class=None,
     icon_class=None,
-    only_login=False,
     error_message=None,
     error_class=None,
-    is_reconnecting=False
+    only_login=False,
+    reconnection=False
 ):
     """
     Renders a 'Sign in with Facebook' button.
@@ -43,11 +47,11 @@ def facebook_login(
     }
 
     context['action'] = reverse('socialnetworks:facebook:login')
-    context['css_class'] = css_class
-    context['icon_class'] = icon_class
-    context['error_class'] = error_class
+    context['css_class'] = css_class or ''
+    context['icon_class'] = icon_class or ''
+    context['error_class'] = error_class or ''
     context['only_login'] = only_login
-    context['is_reconnecting'] = is_reconnecting
+    context['reconnection'] = reconnection
 
     context['label'] = (
         label or

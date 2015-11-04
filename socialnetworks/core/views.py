@@ -162,8 +162,8 @@ class OAuthDialogRedirectView(OAuthMixin, View):
         if 'only_login' in request.POST:
             self.session_put(**{'only_login': request.POST['only_login']})
 
-        if 'is_reconnecting' in request.POST:
-            request.session['is_reconnecting'] = True
+        if 'reconnection' in request.POST:
+            request.session['reconnection'] = True
 
         if self.client.oauth_version == 1:
             # Gets the OAuth request token.
@@ -300,7 +300,7 @@ class OAuthCallbackView(OAuthMixin, View):
         if (
             created or
             not profile.user or
-            request.session.get('is_reconnecting', None)
+            request.session.get('reconnection', None)
         ):
             if request.user.is_authenticated():
                 profile.user = request.user

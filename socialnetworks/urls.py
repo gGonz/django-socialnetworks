@@ -32,7 +32,7 @@ if 'socialnetworks.linkedin' in settings.INSTALLED_APPS:
 if 'socialnetworks.moves' in settings.INSTALLED_APPS:
     urlpatterns = urlpatterns + patterns(
         '',
-        url(r'^moves-app/',
+        url(r'^moves/',
             include('socialnetworks.moves.urls', namespace='moves-app')),
     )
 

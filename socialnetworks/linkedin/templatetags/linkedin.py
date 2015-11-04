@@ -9,8 +9,16 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def linkedin_login(context, label=None, css_class=None, icon_class=None,
-                   only_login=False, error_message=None, error_class=None):
+def linkedin_login(
+    context,
+    label=None,
+    css_class=None,
+    icon_class=None,
+    error_message=None,
+    error_class=None,
+    only_login=False,
+    reconnection=False
+):
     """
     Renders a 'Sign in with LinkedIn' button.
 
@@ -34,10 +42,11 @@ def linkedin_login(context, label=None, css_class=None, icon_class=None,
     }
 
     context['action'] = reverse('socialnetworks:linkedin:login')
-    context['css_class'] = css_class
-    context['icon_class'] = icon_class
-    context['error_class'] = error_class
+    context['css_class'] = css_class or ''
+    context['icon_class'] = icon_class or ''
+    context['error_class'] = error_class or ''
     context['only_login'] = only_login
+    context['reconnection'] = reconnection
 
     context['label'] = (
         label or
