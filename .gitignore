@@ -1,8 +1,15 @@
-*.*~
-*.pyc
+*.~
+*.cache/
 *.egg-info/
 *.project
+*.pyc
 *.pydevproject
+*.swp
+.coverage
+.ropeproject/
 .settings/
+.tox
+build/
 dist/
+htmlcov/
 MANIFEST
