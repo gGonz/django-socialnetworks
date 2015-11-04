@@ -12,6 +12,3 @@ install:
 
 script:
     - tox -e $TOX_ENV
-
-after_success:
-    - tox -e py27-django17 -- --cov=socialnetworks
