@@ -297,11 +297,8 @@ class OAuthCallbackView(OAuthMixin, View):
         # profile to current user, if the user is not logged in then redirects
         # it to the final setup view to create a new user instance prefilled
         # with the data retrieved from the service's API.
-        if (
-            created or
-            not profile.user or
-            request.session.get('reconnection', None)
-        ):
+        if (created or not profile.user or
+                request.session.get('reconnection', None)):
             if request.user.is_authenticated():
                 profile.user = request.user
                 profile.save()
@@ -312,15 +309,15 @@ class OAuthCallbackView(OAuthMixin, View):
                     service=self.client.service_name.lower()
                 )
 
+                # Tell to the user that his connection was successful.
+                tags = 'social %s' % self.client.service_name.lower()
+                messages.success(request, _(
+                    'Your %(service)s profile was successfully connected '
+                    'with your user account.'
+                ) % {'service': self.client.service_name}, extra_tags=tags)
+
             else:
                 self.session_put(**{'new_user': True})
-
-            # Tell to the user that his connection was successful.
-            tags = 'social %s' % self.client.service_name.lower()
-            messages.success(request, _(
-                'Your %(service)s profile was successfully connected '
-                'with your user account.'
-            ) % {'service': self.client.service_name}, extra_tags=tags)
 
         elif (profile.user and profile.user != request.user and
                 request.user.is_authenticated()):
