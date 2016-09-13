@@ -15,7 +15,7 @@ class Migration(SchemaMigration):
             ('service_uid', self.gf('django.db.models.fields.CharField')(max_length=255, unique=True, null=True, blank=True)),
             ('oauth_access_token', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
             ('created_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True, blank=True)),
-            ('last_modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, null=True, blank=True)),
+            ('last_modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True, blank=True)),
             ('oauth_access_token_expires_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('oauth_refresh_token', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
         ))

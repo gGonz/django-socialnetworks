@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('service_uid', models.CharField(max_length=255, unique=True, null=True, verbose_name='uid', blank=True)),
                 ('oauth_access_token', models.CharField(max_length=255, null=True, verbose_name='OAuth access token', blank=True)),
                 ('created_date', models.DateTimeField(auto_now_add=True, verbose_name='created date', null=True)),
-                ('last_modified', models.DateTimeField(auto_now=True, auto_now_add=True, null=True, verbose_name='last modified')),
+                ('last_modified', models.DateTimeField(auto_now=True, null=True, verbose_name='last modified')),
                 ('oauth_access_token_secret', models.CharField(max_length=255, null=True, verbose_name='OAuth access token secret', blank=True)),
                 ('oauth_request_token', models.CharField(max_length=255, null=True, verbose_name='OAuth request token', blank=True)),
                 ('oauth_request_token_secret', models.CharField(max_length=255, null=True, verbose_name='OAuth request token secret', blank=True)),

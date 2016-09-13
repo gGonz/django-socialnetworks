@@ -26,12 +26,12 @@ class BaseSocialProfile(models.Model):
 
     created_date = models.DateTimeField(
         blank=True, null=True,
-        auto_now=False, auto_now_add=True,
+        auto_now_add=True,
         verbose_name=_('created date')
     )
     last_modified = models.DateTimeField(
         null=True, blank=True,
-        auto_now_add=True, auto_now=True,
+        auto_now=True,
         verbose_name=_('last modified')
     )
 
