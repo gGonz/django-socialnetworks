@@ -12,6 +12,8 @@ in `django-socialregistration
 app <https://github.com/flashingpumpkin/django-socialregistration>`__
 but with some improvements and needs required in my projects.
 
+|Build Status|
+
 Installation
 ------------
 
@@ -266,3 +268,6 @@ but POST must have some caveats depending on the service.**\ \*
     data = client.get('me', params={'fields': 'first_name', 'last_name'})
     print data
     >>> {'first_name': 'Juan', 'last_name': 'Smith'}
+
+.. |Build Status| image:: https://travis-ci.org/gGonz/django-socialnetworks.svg?branch=v0.5
+   :target: https://travis-ci.org/gGonz/django-socialnetworks

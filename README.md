@@ -4,6 +4,8 @@ Initially this package was intended to provide "Log in with..." capabilities to 
 
 This package is built on top of the [Python Requests library](http://docs.python-requests.org/) and heavyly based/inspired in [django-socialregistration app](https://github.com/flashingpumpkin/django-socialregistration) but with some improvements and needs required in my projects.
 
+[![Build Status](https://travis-ci.org/gGonz/django-socialnetworks.svg?branch=v0.5)](https://travis-ci.org/gGonz/django-socialnetworks)
+
 
 
 ## Installation
