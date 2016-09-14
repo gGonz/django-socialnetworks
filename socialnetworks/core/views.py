@@ -429,16 +429,18 @@ class OAuthSetupView(OAuthMixin, TemplateView):
             # Fetches the user data from the service.
             UserModel = get_user_model()
             user_data = self.retrieve_user_data()
-            check = lambda k: k in user_data and user_data[k]
 
-            if settings.EMAIL_IS_USERNAME and check('email'):
+            def check_key(key):
+                return key in user_data and user_data[key]
+
+            if settings.EMAIL_IS_USERNAME and check_key('email'):
                 user_data.update(username=user_data['email'])
 
             # Check if the retrieved data is enough to create a new user or
             # fetch an existing user instance from the database.
             # If a existent user matches the data then links the OAuth profile
             # to its account.
-            if check('email'):
+            if check_key('email'):
                 filters = {'email__iexact': user_data['email']}
 
                 try:
@@ -449,7 +451,7 @@ class OAuthSetupView(OAuthMixin, TemplateView):
                     user = None
                     created = False
 
-                if user is None and check('username'):
+                if user is None and check_key('username'):
                     filters = {'username__iexact': user_data['username']}
 
                     if not UserModel.objects.filter(**filters):
